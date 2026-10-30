@@ -1,6 +1,6 @@
 import { NativeComposer } from "./DeviceSystem";
 import { useSkinState } from "./skinState";
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   ChevronLeft,
   Plus,
@@ -100,11 +100,31 @@ function MessageList({
   onRead: (id: string) => void;
   whatsapp?: boolean;
 }) {
+  // Keep the newest message in view: on open, when one arrives, and when the
+  // keyboard shrinks the view, as a real chat app does.
+  const scroller = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const el = scroller.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [items.length]);
+  useEffect(() => {
+    const el = scroller.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(() => {
+      el.scrollTop = el.scrollHeight;
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
   return (
-    <div className={`skin-messages ${whatsapp ? "wa-wallpaper" : ""}`}>
+    <div
+      ref={scroller}
+      className={`skin-messages ${whatsapp ? "wa-wallpaper" : ""}`}
+    >
       <div className="skin-date">{items[0]?.time.slice(0, 10)}</div>
       {items.map((i) =>
-        i.kind === "event" ? (
+        // An event item without text only carries the chat's avatar.
+        i.kind === "event" && !i.body ? null : i.kind === "event" ? (
           <div key={i.id} className="skin-system-tip" role="note">
             {i.body}
           </div>
@@ -136,10 +156,12 @@ function MessageList({
               ) : (
                 i.body
               )}
-              <small className={whatsapp ? undefined : "wx-message-time"}>
-                {i.time.slice(-5)}{" "}
-                {whatsapp && i.outgoing && <CheckCheck size={11} />}
-              </small>
+              {i.meta?.hideTime !== "true" && (
+                <small className={whatsapp ? undefined : "wx-message-time"}>
+                  {i.time.slice(-5)}{" "}
+                  {whatsapp && i.outgoing && <CheckCheck size={11} />}
+                </small>
+              )}
             </button>
             {!whatsapp && i.outgoing && (
               <Avatar name={i.sender} src={i.avatar} />
@@ -190,6 +212,9 @@ export function WeChatSkin(p: SkinProps) {
   ];
   // Friend requests (folder "新的朋友") are not contacts or conversations yet.
   const requests = p.items.filter((i) => i.folder === "新的朋友");
+  // Accepting a request sets ui "friend:<id>", which story events listen to.
+  const added = (i: Item) => p.ui?.["friend:" + i.id] === true;
+  const pending = requests.filter((i) => !added(i));
   const contacts = [
     ...new Set(
       p.items
@@ -287,18 +312,32 @@ export function WeChatSkin(p: SkinProps) {
           )}
           {utility === "新的朋友" &&
             requests.map((i) => (
-              <button
-                key={i.id}
-                className="wx-friend-request"
-                onClick={() => p.onItem(i)}
-              >
-                <Avatar name={i.sender} src={i.avatar} />
-                <span>
-                  <strong>{i.sender}</strong>
-                  <small>{i.body}</small>
-                </span>
-                <em>接受</em>
-              </button>
+              <div key={i.id} className="wx-friend-request">
+                <button className="wx-request-main" onClick={() => p.onItem(i)}>
+                  <Avatar name={i.sender} src={i.avatar} />
+                  <span>
+                    <strong>{i.sender}</strong>
+                    <small>{i.body}</small>
+                  </span>
+                </button>
+                {added(i) ? (
+                  <span className="wx-request-added">已添加</span>
+                ) : (
+                  <button
+                    className="wx-request-add"
+                    onClick={() => {
+                      if (p.creator) return;
+                      p.onUi?.("friend:" + i.id, true);
+                      setUtility("");
+                      setTab("微信");
+                      p.onThread(i.sender);
+                      p.onRead(i.sender);
+                    }}
+                  >
+                    添加
+                  </button>
+                )}
+              </div>
             ))}
           {utility !== "新的朋友" &&
             p.items
@@ -425,8 +464,8 @@ export function WeChatSkin(p: SkinProps) {
                   <UserPlus size={20} />
                 </span>
                 新的朋友
-                {requests.length > 0 && (
-                  <b className="wx-request-badge">{requests.length}</b>
+                {pending.length > 0 && (
+                  <b className="wx-request-badge">{pending.length}</b>
                 )}
               </button>
               <div className="wx-section-label">联系人</div>
@@ -558,6 +597,9 @@ export function WeChatSkin(p: SkinProps) {
             >
               <t.icon size={21} />
               <span>{t.label}</span>
+              {t.label === "通讯录" && pending.length > 0 && (
+                <b className="wx-tab-dot" aria-hidden="true" />
+              )}
             </button>
           ))}
         </nav>

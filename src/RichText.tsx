@@ -1,7 +1,8 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 type RichNode = {
   type?: string;
   text?: string;
+  checked?: boolean;
   marks?: { type: string }[];
   content?: RichNode[];
   attrs?: Record<string, unknown>;
@@ -18,6 +19,8 @@ const allowed = new Set([
   "hardBreak",
   "horizontalRule",
   "codeBlock",
+  "taskList",
+  "taskItem",
 ]);
 function cleanNode(value: unknown, depth = 0): RichNode | undefined {
   if (depth > 12 || !value || typeof value !== "object") return;
@@ -26,6 +29,11 @@ function cleanNode(value: unknown, depth = 0): RichNode | undefined {
   return {
     type: n.type,
     text: typeof n.text === "string" ? n.text : undefined,
+    checked:
+      n.type === "taskItem" &&
+      !!n.attrs &&
+      typeof n.attrs === "object" &&
+      (n.attrs as Record<string, unknown>).checked === true,
     marks: Array.isArray(n.marks)
       ? n.marks
           .filter(
@@ -97,9 +105,43 @@ export function RichText({
         return <hr key={key} />;
       case "codeBlock":
         return <pre key={key}>{children}</pre>;
+      case "taskList":
+        return (
+          <ul key={key} className="rich-checklist">
+            {children}
+          </ul>
+        );
+      case "taskItem":
+        return (
+          <TaskItem key={key} checked={!!n.checked}>
+            {children}
+          </TaskItem>
+        );
       default:
         return <span key={key}>{children}</span>;
     }
   };
   return <div className="detail-body rich-body">{render(n, 0, 0)}</div>;
+}
+/** iOS Notes style checklist row; tapping toggles it for this viewing only. */
+function TaskItem({
+  checked,
+  children,
+}: {
+  checked: boolean;
+  children: ReactNode;
+}) {
+  const [done, setDone] = useState(checked);
+  return (
+    <li className={`rich-task ${done ? "is-done" : ""}`}>
+      <button
+        type="button"
+        role="checkbox"
+        aria-checked={done}
+        aria-label={done ? "标为未完成" : "标为完成"}
+        onClick={() => setDone(!done)}
+      />
+      <div>{children}</div>
+    </li>
+  );
 }

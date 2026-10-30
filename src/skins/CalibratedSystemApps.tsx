@@ -50,8 +50,11 @@ function recordFor(items: Item[], key: string) {
     sleep: ["睡眠"],
     steps: ["步数"],
   };
+  // No card selected yet (key ""): there is no matching record.
+  const words = map[key];
+  if (!words) return undefined;
   return items.find((i) =>
-    map[key].some((s) => meta(i, "metric", i.title).includes(s)),
+    words.some((s) => meta(i, "metric", i.title).includes(s)),
   );
 }
 export function HealthSkin(p: Props) {

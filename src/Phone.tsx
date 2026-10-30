@@ -330,7 +330,15 @@ function PhoneRuntime({
     >
       <KeyboardContext.Provider value={setKeyboard}>
         <div
-          className={`phone-screen wallpaper-${work.phone.wallpaper} ${locked ? "is-locked" : ""} ${app ? "in-app" : ""} ${keyboard ? "keyboard-open" : ""}`}
+          style={
+            safeMedia(work.phone.wallpaper)
+              ? {
+                  // A light top shade keeps the clock and labels legible.
+                  backgroundImage: `linear-gradient(180deg, rgba(0,0,0,.3) 0%, rgba(0,0,0,.08) 38%, rgba(0,0,0,0) 60%, rgba(0,0,0,.12) 100%), url("${safeMedia(work.phone.wallpaper)}")`,
+                }
+              : undefined
+          }
+          className={`phone-screen wallpaper-${safeMedia(work.phone.wallpaper) ? "custom" : work.phone.wallpaper} ${locked ? "is-locked" : ""} ${app ? "in-app" : ""} ${keyboard ? "keyboard-open" : ""}`}
           data-app={app}
           onDragStart={(e) => e.preventDefault()}
           onPointerDown={(e) => {
@@ -916,6 +924,8 @@ function AppContent({
   const [likes, setLikes] = useState<string[]>([]);
   const shown = items
     .filter((i) => creator || visible(i, state))
+    // A scripted draft with no body is typed and deleted, never sent.
+    .filter((i) => creator || !(i.meta?.autoType === "true" && !i.body))
     .filter((i) =>
       (i.title + i.body + i.sender).toLowerCase().includes(q.toLowerCase()),
     );

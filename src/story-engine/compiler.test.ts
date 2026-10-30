@@ -106,3 +106,60 @@ describe("story-defined decorative apps", () => {
     );
   });
 });
+describe("chat open triggers and empty drafts", () => {
+  const story = () => ({
+    scriptVersion: 1,
+    id: "open-chat",
+    title: "点开聊天",
+    phone: { owner: "机主" },
+    installedApps: ["wechat"],
+    contacts: [{ id: "amy", name: "Amy" }],
+    chats: [
+      {
+        id: "chat-amy",
+        app: "wechat",
+        title: "Amy",
+        participants: ["owner", "amy"],
+        messages: [
+          { id: "old", body: "在吗", senderId: "amy" },
+          { id: "late", body: "睡了吗", senderId: "amy", hidden: true },
+          {
+            id: "draft",
+            body: "",
+            senderId: "owner",
+            hidden: true,
+            meta: { autoType: "true", retract: "我们分手吧" },
+          },
+        ],
+      },
+    ],
+    events: [
+      {
+        id: "open",
+        label: "点开 Amy",
+        event: "read",
+        target: "Amy",
+        actions: [{ type: "unlock", key: "late", value: true }],
+      },
+    ],
+    tests: [
+      {
+        name: "点开后可输入",
+        steps: [
+          { event: "read", target: "Amy" },
+          { event: "send", target: "draft" },
+        ],
+        expectUnlocked: ["late", "draft"],
+      },
+    ],
+  });
+  it("accepts a conversation title as a read target and plays the path", () => {
+    const { story: s, work } = compileStory(story());
+    expect(testStory(s, work)).toEqual([]);
+  });
+  it("still rejects a read target that is neither content nor a chat", () => {
+    const s = story();
+    s.events[0].target = "Nobody";
+    expect(() => compileStory(s)).toThrow("不存在的内容或会话");
+  });
+});

@@ -106,6 +106,8 @@ export const workSchema = z.object({
     battery: z.number().min(0).max(100),
     network: z.string(),
     notifications: z.boolean(),
+    /** Shown in Settings → 关于本机. */
+    model: z.string().max(40).optional(),
   }),
   apps: z
     .array(
