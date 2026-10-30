@@ -3,7 +3,7 @@
   "id": "kingston-phone",
   "title": "捡手机",
   "description": "Kingston 的手机。",
-  "revision": 2,
+  "revision": 3,
   "phone": {
     "owner": "Kingston",
     "date": "2026-10-25",
@@ -110,8 +110,13 @@
       "bio": ""
     },
     {
-      "id": "abigale",
-      "name": "Abigale",
+      "id": "abigail",
+      "name": "Abigail",
+      "bio": ""
+    },
+    {
+      "id": "ziyu",
+      "name": "梓渝",
       "bio": ""
     }
   ],
@@ -309,6 +314,59 @@
       ]
     },
     {
+      "id": "chat-ziyu",
+      "app": "wechat",
+      "title": "梓渝",
+      "participants": [
+        "owner",
+        "ziyu"
+      ],
+      "messages": [
+        {
+          "id": "ziyu-1",
+          "body": "不是，哥们",
+          "senderId": "owner",
+          "time": "2026-10-24 21:07"
+        },
+        {
+          "id": "ziyu-2",
+          "body": "我一分钱没赚到",
+          "senderId": "owner",
+          "time": "2026-10-24 21:07"
+        },
+        {
+          "id": "ziyu-3",
+          "body": "还倒贴了好多钱啊",
+          "senderId": "owner",
+          "time": "2026-10-24 21:08"
+        },
+        {
+          "id": "ziyu-4",
+          "body": "下海改变阶级",
+          "senderId": "ziyu",
+          "time": "2026-10-24 21:15"
+        },
+        {
+          "id": "ziyu-5",
+          "body": "没毛病啊",
+          "senderId": "ziyu",
+          "time": "2026-10-24 21:15"
+        },
+        {
+          "id": "ziyu-6",
+          "body": "我也没说往上还是往下啊",
+          "senderId": "ziyu",
+          "time": "2026-10-24 21:16"
+        },
+        {
+          "id": "ziyu-7",
+          "body": "。。。",
+          "senderId": "owner",
+          "time": "2026-10-24 21:20"
+        }
+      ]
+    },
+    {
       "id": "chat-group",
       "app": "wechat",
       "title": "Kingston、Leo、Sing、Eva姐",
@@ -328,18 +386,18 @@
       ]
     },
     {
-      "id": "chat-abigale",
+      "id": "chat-abigail",
       "app": "whatsapp",
-      "title": "Abigale",
+      "title": "Abigail",
       "participants": [
         "owner",
-        "abigale"
+        "abigail"
       ],
       "messages": [
         {
-          "id": "abigale-who",
+          "id": "abigail-who",
           "body": "Who's that guy you posted on Insta?",
-          "senderId": "abigale",
+          "senderId": "abigail",
           "time": "2026-10-25 02:16"
         }
       ]
@@ -351,14 +409,14 @@
         "id": "spotify-recent-1",
         "title": "Neon",
         "body": "",
-        "sender": "John Mayer",
+        "sender": "A2O & A2O LITE",
         "folder": "最近播放"
       },
       {
         "id": "spotify-recent-2",
         "title": "boyfriend",
         "body": "",
-        "sender": "",
+        "sender": "Justin Bieber",
         "folder": "最近播放"
       },
       {
@@ -386,14 +444,14 @@
         "id": "spotify-recent-6",
         "title": "小人国",
         "body": "",
-        "sender": "",
+        "sender": "Winky Wong",
         "folder": "最近播放"
       },
       {
         "id": "spotify-recent-7",
         "title": "褪黑素",
         "body": "",
-        "sender": "",
+        "sender": "江皓南",
         "folder": "最近播放"
       },
       {

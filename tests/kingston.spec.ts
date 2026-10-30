@@ -36,6 +36,7 @@ test("Kingston: passcode, WeChat chats and scripted typing", async ({
     "Sing",
     "刘隽",
     "Eva姐",
+    "梓渝",
     "Kingston、Leo、Sing、Eva姐",
   ])
     await expect(
@@ -109,6 +110,20 @@ test("Kingston: passcode, WeChat chats and scripted typing", async ({
   await phone.screenshot({ path: "outputs/kingston/eva-done.png" });
   await back(phone);
 
+  // 梓渝: static history.
+  await openThread(phone, "梓渝");
+  for (const line of [
+    "不是，哥们",
+    "我一分钱没赚到",
+    "还倒贴了好多钱啊",
+    "下海改变阶级",
+    "没毛病啊",
+    "我也没说往上还是往下啊",
+    "。。。",
+  ])
+    await expect(thread(phone)).toContainText(line);
+  await back(phone);
+
   // Group chat exists with its creation tip.
   await openThread(phone, "Kingston、Leo、Sing、Eva姐");
   await expect(thread(phone).locator(".skin-system-tip")).toHaveText(
@@ -157,8 +172,8 @@ test("Kingston: WhatsApp, Spotify, Threads, Taobao, delivery and WeChat friend r
   await phone
     .getByRole("button", { name: "打开WhatsApp", exact: true })
     .click();
-  await expect(phone.getByText("Abigale").first()).toBeVisible();
-  await phone.getByText("Abigale").first().click();
+  await expect(phone.getByText("Abigail").first()).toBeVisible();
+  await phone.getByText("Abigail").first().click();
   await expect(
     phone.getByText("Who's that guy you posted on Insta?").first(),
   ).toBeVisible();
@@ -223,6 +238,7 @@ test("Kingston: WhatsApp, Spotify, Threads, Taobao, delivery and WeChat friend r
     /Sing$/,
     /刘隽$/,
     /Eva姐$/,
+    /梓渝$/,
   ]);
   await shot("wechat-contacts");
   await phone.getByRole("button", { name: /新的朋友/ }).click();
