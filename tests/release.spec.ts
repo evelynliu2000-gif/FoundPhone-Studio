@@ -14,10 +14,10 @@ test("published default is the template story, preview stays the test phone, fou
   expect(work).toEqual(template);
   expect(preview.id).toBe("ui-test-phone-v2");
   expect(preview.nodes).toHaveLength(0);
-  expect(work.apps).toEqual(preview.apps);
-  expect(
-    work.apps.filter((a: { installed: boolean }) => a.installed),
-  ).toHaveLength(49);
+  // The full catalog stays registered; the story decides what is installed.
+  expect(work.apps.map((a: { id: string }) => a.id).sort()).toEqual(
+    preview.apps.map((a: { id: string }) => a.id).sort(),
+  );
   expect(
     work.apps.filter(
       (a: { installed: boolean; dock: boolean }) => a.installed && a.dock,
@@ -55,6 +55,9 @@ test("published default is the template story, preview stays the test phone, fou
     "src",
     /twitter\.svg$/,
   );
+  // Install from the App Store first when the story does not ship X.
+  if ((await x.locator(".library-get").innerText()).trim() !== "打开")
+    await x.locator(".library-get").click();
   await x.getByRole("button", { name: "打开", exact: true }).click();
   await expect(page.locator(".app-screen:not([inert])")).toHaveCSS(
     "transform",
