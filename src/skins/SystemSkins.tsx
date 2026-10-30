@@ -427,11 +427,16 @@ export function NotesSkin(p: Props) {
           {list.map((i) => (
             <button key={i.id} onClick={() => p.onItem(i)}>
               <strong>
-                {i.password && <LockKeyhole size={12} />} {i.title}
+                {(i.password || i.meta?.locked === "true") && (
+                  <LockKeyhole size={12} />
+                )}{" "}
+                {i.title}
               </strong>
               <p>
                 <time>{i.time.slice(5, 10)}</time>{" "}
-                {i.password ? "已锁定的备忘录" : i.body.split("\n")[0]}
+                {i.password || i.meta?.locked === "true"
+                  ? "已锁定的备忘录"
+                  : i.body.split("\n")[0]}
               </p>
               <small>{i.folder}</small>
             </button>

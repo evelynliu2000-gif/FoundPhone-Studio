@@ -618,7 +618,9 @@ test("Kingston: wallpaper, model, health alert, Alipay, 小红书, notes, photos
   await shot("notes-checklist");
   await phone.getByRole("button", { name: "返回" }).first().click();
   await phone.locator(".notes-list button", { hasText: "上床日记" }).click();
-  await expect(phone.getByText("这条内容已锁定")).toBeVisible();
+  await expect(phone.getByText("此备忘录已锁定")).toBeVisible();
+  await expect(phone.getByPlaceholder("内容密码")).toHaveCount(0);
+  await expect(phone.getByRole("button", { name: "解锁内容" })).toHaveCount(0);
   await expect(phone.getByText(/我今天居然/)).toHaveCount(0);
   await shot("notes-locked");
 

@@ -961,7 +961,13 @@ function AppContent({
         : (catalogSkins[app.id as keyof typeof catalogSkins] ?? null);
   const detailView = detail ? (
     <div className="phone-content detail-content">
-      {detail.password && !creator && !unlocks.includes(detail.id) ? (
+      {/* meta.locked: shown as locked with no way to open it. */}
+      {detail.meta?.locked === "true" && !creator ? (
+        <div className="locked-note">
+          <LockKeyhole size={36} />
+          <h3>此备忘录已锁定</h3>
+        </div>
+      ) : detail.password && !creator && !unlocks.includes(detail.id) ? (
         <div className="locked-note">
           <LockKeyhole size={36} />
           <h3>这条内容已锁定</h3>
@@ -1049,6 +1055,7 @@ function AppContent({
         </div>
         {detail &&
           (socialDetailApps.has(app.id) &&
+          detail.meta?.locked !== "true" &&
           (!detail.password || unlocks.includes(detail.id)) ? (
             <SocialDetail
               app={app.id}
@@ -1059,6 +1066,7 @@ function AppContent({
               onUi={onUi}
             />
           ) : nativeDetailApps.has(app.id) &&
+            detail.meta?.locked !== "true" &&
             (!detail.password || unlocks.includes(detail.id)) ? (
             <NativeDetail app={app.id} item={detail} back={back} />
           ) : (
