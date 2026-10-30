@@ -128,3 +128,110 @@ test("Kingston: passcode, WeChat chats and scripted typing", async ({
   await expect(thread(phone)).toContainText("知道了");
   expect(errors).toEqual([]);
 });
+test("Kingston: WhatsApp, Spotify, Threads, Taobao, delivery and WeChat friend request", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/");
+  const phone = page.locator(".phone-screen");
+  await phone.getByRole("button", { name: "轻触解锁" }).click();
+  for (const n of "0306")
+    await phone
+      .getByRole("button", { name: "密码键" + n, exact: true })
+      .click();
+  await expect(phone.locator(".home-screen")).toBeVisible();
+  const openApp = async (name: string) => {
+    await phone.getByRole("button", { name: "返回桌面", exact: true }).click();
+    await phone
+      .getByRole("button", { name: "打开" + name, exact: true })
+      .click();
+    await expect(page.locator(".app-screen:not([inert])")).toHaveCSS(
+      "transform",
+      "none",
+    );
+  };
+  const shot = (name: string) =>
+    phone.screenshot({ path: `outputs/kingston/${name}.png` });
+
+  await phone
+    .getByRole("button", { name: "打开WhatsApp", exact: true })
+    .click();
+  await expect(phone.getByText("Abigale").first()).toBeVisible();
+  await phone.getByText("Abigale").first().click();
+  await expect(
+    phone.getByText("Who's that guy you posted on Insta?").first(),
+  ).toBeVisible();
+  await shot("whatsapp");
+
+  await openApp("Spotify");
+  await phone.getByRole("button", { name: "最近播放" }).click();
+  const tracks = phone.locator(".spotify-tracks strong");
+  await expect(tracks).toHaveText([
+    "Neon",
+    "boyfriend",
+    "少女的祈祷",
+    "Yellow",
+    "雨爱",
+    "小人国",
+    "褪黑素",
+    "Visions of Gideon",
+    "刻在我心底的名字",
+  ]);
+  await shot("spotify");
+
+  await openApp("Threads");
+  for (const t of [
+    "料杰你们什么时候能调理好",
+    "zjj是不是疯了居然躲开",
+    "林克们又护复审了",
+  ])
+    await expect(phone.getByText(t)).toBeVisible();
+  await shot("threads");
+
+  await openApp("淘宝");
+  await phone.getByRole("button", { name: "订单", exact: true }).click();
+  await expect(phone.locator(".taobao-order section strong")).toHaveText([
+    "双眼皮贴",
+    "垃圾袋",
+    "拖把",
+    "避孕套",
+    "面膜",
+  ]);
+  await shot("taobao");
+
+  await openApp("外卖");
+  await phone.getByRole("button", { name: "订单", exact: true }).click();
+  await expect(phone.locator(".delivery-order header strong")).toHaveText([
+    "霸王茶姬",
+    "老街烧烤",
+    "霸王茶姬",
+    "霸王茶姬",
+    "霸王茶姬",
+    "霸王茶姬",
+    "片皮烤鸭",
+    "霸王茶姬",
+  ]);
+  await shot("delivery");
+
+  await openApp("微信");
+  await expect(phone.locator(".wechat-ui")).not.toContainText("好友申请");
+  await phone.getByRole("button", { name: "通讯录", exact: true }).click();
+  await expect(phone.locator(".wx-request-badge")).toHaveText("1");
+  await expect(phone.locator(".wx-contact:not(.wx-new-friends)")).toHaveText([
+    /Leo$/,
+    /Sing$/,
+    /刘隽$/,
+    /Eva姐$/,
+  ]);
+  await shot("wechat-contacts");
+  await phone.getByRole("button", { name: /新的朋友/ }).click();
+  await expect(phone.locator(".wx-friend-request")).toContainText("汪佳辰");
+  await shot("wechat-new-friends");
+  await phone.locator(".wx-friend-request").click();
+  await expect(phone).toContainText(
+    "我听说你回国了，如果有机会你来上海，我们还能再见面吗？我很想你。",
+  );
+  await shot("wechat-request-detail");
+  expect(errors).toEqual([]);
+});

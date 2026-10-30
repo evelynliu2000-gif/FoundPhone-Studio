@@ -114,7 +114,7 @@ export function SpotifySkin(p: Props) {
               <div>
                 <strong>{i.title}</strong>
                 <small>
-                  {i.sender} · {meta(i, "album")}
+                  {[i.sender, meta(i, "album")].filter(Boolean).join(" · ")}
                 </small>
               </div>
               <small>{meta(i, "duration")}</small>
@@ -542,4 +542,3 @@ export function NetflixSkin(p: Props) {
     </div>
   );
 }
-

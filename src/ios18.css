@@ -966,3 +966,68 @@
   line-height: 1.45;
   text-align: center;
 }
+/* WeChat 通讯录 → 新的朋友 (friend requests, folder "新的朋友"). */
+.ios18 .wechat-ui .wx-new-friends-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 5px;
+  background: #fa9d3b;
+  color: white;
+  flex: none;
+}
+.ios18 .wechat-ui .wx-request-badge {
+  margin-left: auto;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #fa5151;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+}
+.ios18 .wechat-ui .wx-friend-request {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 12px 14px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+.ios18 .wechat-ui .wx-friend-request > span {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+.ios18 .wechat-ui .wx-friend-request strong {
+  font-size: 15px;
+  font-weight: 500;
+}
+.ios18 .wechat-ui .wx-friend-request small {
+  color: #999;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ios18 .wechat-ui .wx-friend-request em {
+  flex: none;
+  font-style: normal;
+  padding: 5px 12px;
+  border-radius: 4px;
+  background: #07c160;
+  color: white;
+  font-size: 13px;
+}
+.ios18 .wechat-ui .wx-friend-request .skin-avatar {
+  flex: none;
+  width: 42px;
+  height: 42px;
+}

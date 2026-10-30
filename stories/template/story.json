@@ -3,7 +3,7 @@
   "id": "kingston-phone",
   "title": "捡手机",
   "description": "Kingston 的手机。",
-  "revision": 1,
+  "revision": 2,
   "phone": {
     "owner": "Kingston",
     "date": "2026-10-25",
@@ -107,6 +107,11 @@
     {
       "id": "eva",
       "name": "Eva姐",
+      "bio": ""
+    },
+    {
+      "id": "abigale",
+      "name": "Abigale",
       "bio": ""
     }
   ],
@@ -230,7 +235,8 @@
           "id": "liujuan-added",
           "body": "你已添加了刘隽，现在可以开始聊天了。",
           "time": "2026-10-22 16:05",
-          "kind": "event"
+          "kind": "event",
+          "senderId": "liujuan"
         },
         {
           "id": "liujuan-out-1",
@@ -320,9 +326,293 @@
           "kind": "event"
         }
       ]
+    },
+    {
+      "id": "chat-abigale",
+      "app": "whatsapp",
+      "title": "Abigale",
+      "participants": [
+        "owner",
+        "abigale"
+      ],
+      "messages": [
+        {
+          "id": "abigale-who",
+          "body": "Who's that guy you posted on Insta?",
+          "senderId": "abigale",
+          "time": "2026-10-25 02:16"
+        }
+      ]
     }
   ],
-  "content": {},
+  "content": {
+    "spotify": [
+      {
+        "id": "spotify-recent-1",
+        "title": "Neon",
+        "body": "",
+        "sender": "John Mayer",
+        "folder": "最近播放"
+      },
+      {
+        "id": "spotify-recent-2",
+        "title": "boyfriend",
+        "body": "",
+        "sender": "",
+        "folder": "最近播放"
+      },
+      {
+        "id": "spotify-recent-3",
+        "title": "少女的祈祷",
+        "body": "",
+        "sender": "杨千嬅",
+        "folder": "最近播放"
+      },
+      {
+        "id": "spotify-recent-4",
+        "title": "Yellow",
+        "body": "",
+        "sender": "Coldplay",
+        "folder": "最近播放"
+      },
+      {
+        "id": "spotify-recent-5",
+        "title": "雨爱",
+        "body": "",
+        "sender": "杨丞琳",
+        "folder": "最近播放"
+      },
+      {
+        "id": "spotify-recent-6",
+        "title": "小人国",
+        "body": "",
+        "sender": "",
+        "folder": "最近播放"
+      },
+      {
+        "id": "spotify-recent-7",
+        "title": "褪黑素",
+        "body": "",
+        "sender": "",
+        "folder": "最近播放"
+      },
+      {
+        "id": "spotify-recent-8",
+        "title": "Visions of Gideon",
+        "body": "",
+        "sender": "Sufjan Stevens",
+        "folder": "最近播放"
+      },
+      {
+        "id": "spotify-recent-9",
+        "title": "刻在我心底的名字",
+        "body": "",
+        "sender": "卢广仲",
+        "folder": "最近播放"
+      }
+    ],
+    "threads": [
+      {
+        "id": "threads-post-1",
+        "title": "xswl 的串文",
+        "body": "料杰你们什么时候能调理好",
+        "sender": "xswl",
+        "time": "2026-10-25 08:31"
+      },
+      {
+        "id": "threads-post-2",
+        "title": "link123 的串文",
+        "body": "zjj是不是疯了居然躲开",
+        "sender": "link123",
+        "time": "2026-10-25 08:12"
+      },
+      {
+        "id": "threads-post-3",
+        "title": "0306bb 的串文",
+        "body": "林克们又护复审了",
+        "sender": "0306bb",
+        "time": "2026-10-25 07:47"
+      }
+    ],
+    "taobao": [
+      {
+        "id": "taobao-order-1",
+        "title": "双眼皮贴",
+        "body": "隐形双眼皮贴 · 自然款 480贴",
+        "sender": "美妆工具小店",
+        "folder": "订单",
+        "time": "2026-10-23 22:41",
+        "meta": {
+          "price": "19.90",
+          "status": "已完成"
+        }
+      },
+      {
+        "id": "taobao-order-2",
+        "title": "垃圾袋",
+        "body": "加厚垃圾袋 · 3卷",
+        "sender": "家居日用店",
+        "folder": "订单",
+        "time": "2026-10-21 13:05",
+        "meta": {
+          "price": "12.80",
+          "status": "已完成"
+        }
+      },
+      {
+        "id": "taobao-order-3",
+        "title": "拖把",
+        "body": "免手洗平板拖把",
+        "sender": "清洁用品店",
+        "folder": "订单",
+        "time": "2026-10-19 20:16",
+        "meta": {
+          "price": "59.00",
+          "status": "已完成"
+        }
+      },
+      {
+        "id": "taobao-order-4",
+        "title": "避孕套",
+        "body": "避孕套 · 10只装",
+        "sender": "个护用品店",
+        "folder": "订单",
+        "time": "2026-10-18 01:37",
+        "meta": {
+          "price": "49.90",
+          "status": "已完成"
+        }
+      },
+      {
+        "id": "taobao-order-5",
+        "title": "面膜",
+        "body": "补水保湿面膜 · 10片",
+        "sender": "护肤专营店",
+        "folder": "订单",
+        "time": "2026-10-15 21:52",
+        "meta": {
+          "price": "69.00",
+          "status": "已完成"
+        }
+      }
+    ],
+    "delivery": [
+      {
+        "id": "delivery-order-1",
+        "title": "伯牙绝弦",
+        "body": "大杯 少糖",
+        "sender": "霸王茶姬",
+        "folder": "订单",
+        "time": "2026-10-24 15:20",
+        "meta": {
+          "price": "16.00",
+          "status": "已送达",
+          "address": "家"
+        }
+      },
+      {
+        "id": "delivery-order-2",
+        "title": "烤串拼盘",
+        "body": "2人份",
+        "sender": "老街烧烤",
+        "folder": "订单",
+        "time": "2026-10-24 00:46",
+        "meta": {
+          "price": "88.00",
+          "status": "已送达",
+          "address": "家"
+        }
+      },
+      {
+        "id": "delivery-order-3",
+        "title": "伯牙绝弦",
+        "body": "大杯 少糖",
+        "sender": "霸王茶姬",
+        "folder": "订单",
+        "time": "2026-10-23 14:58",
+        "meta": {
+          "price": "16.00",
+          "status": "已送达",
+          "address": "家"
+        }
+      },
+      {
+        "id": "delivery-order-4",
+        "title": "伯牙绝弦",
+        "body": "大杯 少糖 ×2",
+        "sender": "霸王茶姬",
+        "folder": "订单",
+        "time": "2026-10-22 16:03",
+        "meta": {
+          "price": "32.00",
+          "status": "已送达",
+          "address": "家"
+        }
+      },
+      {
+        "id": "delivery-order-5",
+        "title": "伯牙绝弦",
+        "body": "大杯 少糖",
+        "sender": "霸王茶姬",
+        "folder": "订单",
+        "time": "2026-10-21 15:37",
+        "meta": {
+          "price": "16.00",
+          "status": "已送达",
+          "address": "家"
+        }
+      },
+      {
+        "id": "delivery-order-6",
+        "title": "伯牙绝弦",
+        "body": "大杯 少糖",
+        "sender": "霸王茶姬",
+        "folder": "订单",
+        "time": "2026-10-20 14:49",
+        "meta": {
+          "price": "16.00",
+          "status": "已送达",
+          "address": "家"
+        }
+      },
+      {
+        "id": "delivery-order-7",
+        "title": "烤鸭半只",
+        "body": "配饼",
+        "sender": "片皮烤鸭",
+        "folder": "订单",
+        "time": "2026-10-19 19:12",
+        "meta": {
+          "price": "68.00",
+          "status": "已送达",
+          "address": "家"
+        }
+      },
+      {
+        "id": "delivery-order-8",
+        "title": "伯牙绝弦",
+        "body": "大杯 少糖",
+        "sender": "霸王茶姬",
+        "folder": "订单",
+        "time": "2026-10-18 15:26",
+        "meta": {
+          "price": "16.00",
+          "status": "已送达",
+          "address": "家"
+        }
+      }
+    ],
+    "wechat": [
+      {
+        "id": "wechat-request-wang",
+        "title": "好友申请",
+        "sender": "汪佳辰",
+        "folder": "新的朋友",
+        "body": "我听说你回国了，如果有机会你来上海，我们还能再见面吗？我很想你。",
+        "time": "2026-10-24 23:58"
+      }
+    ]
+  },
   "variables": {},
   "events": [
     {

@@ -10,6 +10,7 @@ import {
   Users,
   Compass,
   User,
+  UserPlus,
   Camera,
   Phone,
   Video,
@@ -174,12 +175,19 @@ export function WeChatSkin(p: SkinProps) {
   const conversations = [
     ...new Set(
       p.items
-        .filter((i) => !["朋友圈", "我"].includes(i.folder))
+        .filter((i) => !["朋友圈", "我", "新的朋友"].includes(i.folder))
         .map((i) => i.title),
     ),
   ];
+  // Friend requests (folder "新的朋友") are not contacts or conversations yet.
+  const requests = p.items.filter((i) => i.folder === "新的朋友");
   const contacts = [
-    ...new Set(p.items.map((i) => i.sender).filter((s) => s !== "我")),
+    ...new Set(
+      p.items
+        .filter((i) => i.folder !== "新的朋友")
+        .map((i) => i.sender)
+        .filter((s) => s !== "我" && s !== p.owner),
+    ),
   ];
   const posts = p.items.filter(
     (i) => i.folder === "朋友圈" || i.kind === "post",
@@ -268,18 +276,34 @@ export function WeChatSkin(p: SkinProps) {
               ))}
             </div>
           )}
-          {p.items
-            .filter((i) => i.folder === utility)
-            .map((i) => (
+          {utility === "新的朋友" &&
+            requests.map((i) => (
               <button
                 key={i.id}
-                className="wx-discovery"
+                className="wx-friend-request"
                 onClick={() => p.onItem(i)}
               >
-                {i.title}
-                <span>›</span>
+                <Avatar name={i.sender} src={i.avatar} />
+                <span>
+                  <strong>{i.sender}</strong>
+                  <small>{i.body}</small>
+                </span>
+                <em>接受</em>
               </button>
             ))}
+          {utility !== "新的朋友" &&
+            p.items
+              .filter((i) => i.folder === utility)
+              .map((i) => (
+                <button
+                  key={i.id}
+                  className="wx-discovery"
+                  onClick={() => p.onItem(i)}
+                >
+                  {i.title}
+                  <span>›</span>
+                </button>
+              ))}
           {!p.items.some((i) => i.folder === utility) &&
             utility !== "聊天信息" && <p className="skin-empty">暂无内容</p>}
         </div>
@@ -378,6 +402,18 @@ export function WeChatSkin(p: SkinProps) {
             </>
           ) : tab === "通讯录" ? (
             <>
+              <button
+                className="wx-contact wx-new-friends"
+                onClick={() => setUtility("新的朋友")}
+              >
+                <span className="wx-new-friends-icon">
+                  <UserPlus size={20} />
+                </span>
+                新的朋友
+                {requests.length > 0 && (
+                  <b className="wx-request-badge">{requests.length}</b>
+                )}
+              </button>
               <div className="wx-section-label">联系人</div>
               {contacts.map((c) => (
                 <button
