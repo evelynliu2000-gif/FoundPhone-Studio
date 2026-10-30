@@ -381,7 +381,23 @@ test("Kingston: calls, SMS, Google history, calendar, mail, WhatsApp, Netflix an
   await phone.locator(".wa-chat-row", { hasText: "vfs team" }).click();
   await expect(phone.locator(".skin-system-tip")).toHaveText("你已加入此群组");
 
-  // Opening Taobao delivers Leo's WeChat message as a banner and in the chat.
+  // Taobao only delivers Leo's message after Leo has replied "起来了".
+  await openApp("淘宝");
+  await page.waitForTimeout(1500);
+  await expect(page.getByText("昨天套子用完了，该买了")).toHaveCount(0);
+  await openApp("微信");
+  await phone
+    .locator(".wechat-ui")
+    .getByRole("button", { name: "Leo" })
+    .first()
+    .click();
+  await expect(phone.locator(".skin-messages")).not.toContainText(
+    "昨天套子用完了",
+  );
+  await phone.getByRole("button", { name: "输入消息" }).click();
+  await expect(phone.locator(".skin-messages")).toContainText("起来了", {
+    timeout: 15000,
+  });
   await openApp("淘宝");
   await expect(page.getByText("昨天套子用完了，该买了").first()).toBeVisible();
   await shot("taobao-banner");
@@ -391,8 +407,11 @@ test("Kingston: calls, SMS, Google history, calendar, mail, WhatsApp, Netflix an
     .getByRole("button", { name: "Leo" })
     .first()
     .click();
-  await expect(phone.locator(".skin-messages")).toContainText(
-    "昨天套子用完了，该买了",
-  );
+  await expect(
+    phone.locator(".skin-messages .skin-message").last(),
+  ).toContainText("昨天套子用完了，该买了");
+  await shot("leo-after-taobao");
+  await openApp("Netflix");
+  await shot("netflix");
   expect(errors).toEqual([]);
 });
