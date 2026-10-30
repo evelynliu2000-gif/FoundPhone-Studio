@@ -38,8 +38,12 @@ import {
   Lock,
 } from "lucide-react";
 import { motion } from "motion/react";
-import type { Work } from "./schema";
-export const KeyboardContext = createContext<(open: boolean) => void>(() => {});
+import type { Item, Work } from "./schema";
+export const KeyboardContext = createContext<
+  (open: boolean, script?: Item[]) => void
+>(() => {});
+/** Pending scripted drafts for the open conversation (see chat.nextAutoType). */
+export const ComposerScriptContext = createContext<Item[]>([]);
 export function NativeComposer({
   creator,
   onAdd,
@@ -48,11 +52,12 @@ export function NativeComposer({
   onAdd: () => void;
 }) {
   const open = useContext(KeyboardContext);
+  const script = useContext(ComposerScriptContext);
   return (
     <button
       className="native-compose-field"
       aria-label={creator ? "添加消息" : "输入消息"}
-      onClick={() => (creator ? onAdd() : open(true))}
+      onClick={() => (creator ? onAdd() : open(true, script))}
     >
       {creator ? "添加消息" : ""}
     </button>
@@ -404,23 +409,101 @@ export function ControlCenter({
     </motion.div>
   );
 }
-export function DeviceKeyboard({ close }: { close: () => void }) {
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+export function DeviceKeyboard({
+  close,
+  script = [],
+  onSend,
+}: {
+  close: () => void;
+  script?: Item[];
+  onSend?: (id: string) => void;
+}) {
   const [value, setValue] = useState(""),
     [shift, setShift] = useState(false),
-    [numbers, setNumbers] = useState(false);
+    [numbers, setNumbers] = useState(false),
+    [auto, setAuto] = useState(script.length > 0),
+    [pressing, setPressing] = useState(false);
+  useEffect(() => {
+    if (!script.length) return;
+    let cancelled = false;
+    const type = async (text: string) => {
+      let typed = "";
+      for (const ch of Array.from(text)) {
+        await wait(130);
+        if (cancelled) return;
+        typed += ch;
+        setValue(typed);
+      }
+    };
+    const erase = async (text: string) => {
+      const chars = Array.from(text);
+      while (chars.length) {
+        await wait(70);
+        if (cancelled) return;
+        chars.pop();
+        setValue(chars.join(""));
+      }
+    };
+    void (async () => {
+      await wait(350);
+      for (const item of script) {
+        if (cancelled) return;
+        const retract = item.meta?.retract;
+        if (retract) {
+          await type(retract);
+          await wait(900);
+          await erase(retract);
+          await wait(450);
+        }
+        await type(item.body);
+        await wait(550);
+        if (cancelled) return;
+        setPressing(true);
+        await wait(180);
+        if (cancelled) return;
+        onSend?.(item.id);
+        setValue("");
+        setPressing(false);
+        await wait(450);
+      }
+      if (cancelled) return;
+      setAuto(false);
+      close();
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // The script is fixed for the lifetime of this keyboard instance.
+  }, []);
   return (
-    <div className="device-keyboard" role="dialog" aria-label="屏幕键盘">
+    <div
+      className={`device-keyboard ${auto ? "is-auto-typing" : ""}`}
+      role="dialog"
+      aria-label="屏幕键盘"
+    >
       <div className="keyboard-draft">
         <input
-          autoFocus
+          autoFocus={!auto}
+          readOnly={auto}
           aria-label="消息草稿"
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="输入消息"
         />
-        <button aria-label="收起键盘" onClick={close}>
-          <ChevronDown />
-        </button>
+        {auto && value ? (
+          <button
+            className={`keyboard-send ${pressing ? "is-pressed" : ""}`}
+            aria-label="发送"
+            tabIndex={-1}
+          >
+            发送
+          </button>
+        ) : (
+          <button aria-label="收起键盘" onClick={close}>
+            <ChevronDown />
+          </button>
+        )}
       </div>
       <div className="keyboard-candidates">
         {(value ? [value, "好的", "知道了"] : ["我", "你", "好的"]).map(

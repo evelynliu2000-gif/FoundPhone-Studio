@@ -1,17 +1,24 @@
 import { test, expect } from "@playwright/test";
-test("published default matches full test preview, four dock apps and updated status bar", async ({
+import { readFileSync } from "node:fs";
+import { compileStory } from "../src/story-engine/compiler";
+import { unlockPhone } from "./unlock";
+test("published default is the template story, preview stays the test phone, four dock apps and updated status bar", async ({
   page,
   request,
 }) => {
   const work = await (await request.get("/work.json")).json();
   const preview = await (await request.get("/test-work.json")).json();
-  expect(work.id).toBe("ui-test-phone-v2");
-  expect(work.apps).toEqual(preview.apps);
-  expect(work.data).toEqual(preview.data);
-  expect(
-    work.apps.filter((a: { installed: boolean }) => a.installed),
-  ).toHaveLength(49);
-  expect(work.nodes).toHaveLength(0);
+  const template = compileStory(
+    JSON.parse(readFileSync("stories/template/story.json", "utf8")),
+  ).work;
+  expect(work).toEqual(template);
+  expect(preview.id).toBe("ui-test-phone-v2");
+  expect(preview.nodes).toHaveLength(0);
+  // The full catalog stays registered; the story decides what is installed
+  // and may add its own icon-only apps.
+  expect(work.apps.map((a: { id: string }) => a.id)).toEqual(
+    expect.arrayContaining(preview.apps.map((a: { id: string }) => a.id)),
+  );
   expect(
     work.apps.filter(
       (a: { installed: boolean; dock: boolean }) => a.installed && a.dock,
@@ -24,8 +31,8 @@ test("published default matches full test preview, four dock apps and updated st
   await page.getByRole("button", { name: "轻触解锁" }).waitFor();
   await page
     .locator(".phone-screen")
-    .screenshot({ path: "docs/images/lock.png" });
-  await page.getByRole("button", { name: "轻触解锁" }).click();
+    .screenshot({ path: "outputs/release/lock.png" });
+  await unlockPhone(page, work.phone.passcode);
   await expect(page.locator(".lock-screen")).toHaveCount(0);
   await expect(page.locator(".interactive-home")).toHaveCSS("opacity", "1");
   await expect(page.locator(".dock [data-home-key]")).toHaveCount(4);
@@ -34,7 +41,7 @@ test("published default matches full test preview, four dock apps and updated st
   await expect(page.locator(".status-wifi")).toBeVisible();
   await page
     .locator(".phone-screen")
-    .screenshot({ path: "docs/images/home.png" });
+    .screenshot({ path: "outputs/release/home.png" });
   await page
     .locator(".status-bar")
     .screenshot({ path: "outputs/release/status-bar.png" });
@@ -42,15 +49,16 @@ test("published default matches full test preview, four dock apps and updated st
     .getByRole("button", { name: "打开App Store", exact: true })
     .click();
   await page.getByPlaceholder("搜索全部App").fill("X");
-  const x = page
-    .locator(".runtime-library-row")
-    .filter({
-      has: page.locator(".library-app-title strong", { hasText: /^X$/ }),
-    });
+  const x = page.locator(".runtime-library-row").filter({
+    has: page.locator(".library-app-title strong", { hasText: /^X$/ }),
+  });
   await expect(x.locator("[data-original-icon=twitter] img")).toHaveAttribute(
     "src",
     /twitter\.svg$/,
   );
+  // Install from the App Store first when the story does not ship X.
+  if ((await x.locator(".library-get").innerText()).trim() !== "打开")
+    await x.locator(".library-get").click();
   await x.getByRole("button", { name: "打开", exact: true }).click();
   await expect(page.locator(".app-screen:not([inert])")).toHaveCSS(
     "transform",
@@ -72,9 +80,9 @@ test("published default matches full test preview, four dock apps and updated st
   );
   await page
     .locator(".phone-screen")
-    .screenshot({ path: "docs/images/settings.png" });
+    .screenshot({ path: "outputs/release/settings.png" });
   await page.reload();
-  await page.getByRole("button", { name: "轻触解锁" }).click();
+  await unlockPhone(page, work.phone.passcode);
   await expect(page.locator(".dock [data-home-key]")).toHaveCount(4);
   expect(
     await page.evaluate(

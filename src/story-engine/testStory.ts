@@ -1,6 +1,7 @@
 import { initialRuntime, type Work } from "../schema";
 import { dispatch, advance, choose, visible } from "../engine";
 import type { Story } from "./compiler";
+import { nextAutoType } from "../chat";
 export function testStory(story: Story, work: Work) {
   const errors: string[] = [];
   if (work.nodes.some((n) => n.type !== "comment") && !story.tests.length)
@@ -34,6 +35,24 @@ export function testStory(story: Story, work: Work) {
           continue;
         }
       }
+      if (step.event === "send") {
+        const app = Object.keys(work.data).find((a) =>
+          work.data[a].some((x) => x.id === step.target),
+        );
+        const item = app
+          ? work.data[app].find((x) => x.id === step.target)
+          : undefined;
+        if (
+          !app ||
+          !item ||
+          !nextAutoType(work.data[app], item.title, state).some(
+            (x) => x.id === item.id,
+          )
+        ) {
+          errors.push(at + ": 自动输入消息尚不能发送");
+          continue;
+        }
+      }
       if (step.choose) {
         if (!state.choices.some((c) => c.target === step.choose))
           errors.push(at + ": 选项不可达");
@@ -43,7 +62,10 @@ export function testStory(story: Story, work: Work) {
         state = advance(work, state, step.advanceMs);
       if (step.event) state = dispatch(work, state, step.event, step.target);
     }
-    if (!state.endings.includes(t.ending))
+    if (t.ending === undefined) {
+      if (!t.expectUnlocked.length)
+        errors.push(t.name + ": 需要 ending 或 expectUnlocked");
+    } else if (!state.endings.includes(t.ending))
       errors.push(t.name + ": 未到达结局 " + t.ending);
     else reached.add(t.ending);
     for (const id of t.expectUnlocked)

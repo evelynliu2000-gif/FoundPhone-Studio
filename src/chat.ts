@@ -1,4 +1,29 @@
-import { makeItem, type Item } from "./schema";
+import { makeItem, type Item, type Runtime } from "./schema";
+import { visible } from "./engine";
+/**
+ * Scripted composer: owner messages marked meta.autoType="true" and hidden:true
+ * are typed automatically when the player taps the chat input. Returns the next
+ * batch for a conversation (consecutive pending autoType items), only once every
+ * earlier message in that conversation is visible, so replies gate later rounds.
+ */
+export function nextAutoType(
+  items: Item[],
+  thread: string,
+  s: Runtime,
+): Item[] {
+  const all = items.filter(
+    (i) => i.title === thread && !s.hidden.includes(i.id),
+  );
+  const pending = (i: Item) => i.meta?.autoType === "true" && !visible(i, s);
+  const start = all.findIndex(pending);
+  if (start < 0 || all.slice(0, start).some((i) => !visible(i, s))) return [];
+  const batch: Item[] = [];
+  for (const i of all.slice(start)) {
+    if (!pending(i)) break;
+    batch.push(i);
+  }
+  return batch;
+}
 export function parseChat(text: string): { items: Item[]; errors: string[] } {
   const errors: string[] = [];
   const items: Item[] = [];

@@ -3,6 +3,7 @@ import { readFileSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { compileStory } from "../src/story-engine/compiler";
 import { originalIconFiles } from "../src/ios/originalIconFiles";
+import { unlockPhone } from "./unlock";
 test("published icons match source bytes and decode on desktop and App Store", async ({
   page,
   request,
@@ -73,9 +74,10 @@ test("missing original image safely falls back without losing app action", async
 }) => {
   const probe = await request.get("/icon-assets/camera.png");
   test.skip(!probe.ok(), "公开构建不带本地图标");
+  const { phone } = await (await request.get("/work.json")).json();
   await page.route("**/icon-assets/photos.png", (r) => r.abort());
   await page.goto("/");
-  await page.getByRole("button", { name: "轻触解锁" }).click();
+  await unlockPhone(page, phone.passcode);
   await expect(
     page.getByRole("button", { name: "打开相册", exact: true }).locator("svg"),
   ).toBeVisible();

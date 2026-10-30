@@ -953,3 +953,201 @@
   font-size: 12px;
 }
 
+/* WeChat system tips (kind "event"), e.g. friend added / group invite. */
+.ios18 .wechat-ui .skin-system-tip {
+  align-self: center;
+  max-width: 78%;
+  margin: 4px auto 18px;
+  padding: 4px 9px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.05);
+  color: #8c8c8c;
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: center;
+}
+/* WeChat 通讯录 → 新的朋友 (friend requests, folder "新的朋友"). */
+.ios18 .wechat-ui .wx-new-friends-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 5px;
+  background: #fa9d3b;
+  color: white;
+  flex: none;
+}
+.ios18 .wechat-ui .wx-request-badge {
+  margin-left: auto;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #fa5151;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+}
+.ios18 .wechat-ui .wx-friend-request {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 12px 14px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+.ios18 .wechat-ui .wx-friend-request > span {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+.ios18 .wechat-ui .wx-friend-request strong {
+  font-size: 15px;
+  font-weight: 500;
+}
+.ios18 .wechat-ui .wx-friend-request small {
+  color: #999;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ios18 .wechat-ui .wx-friend-request em {
+  flex: none;
+  font-style: normal;
+  padding: 5px 12px;
+  border-radius: 4px;
+  background: #07c160;
+  color: white;
+  font-size: 13px;
+}
+.ios18 .wechat-ui .wx-friend-request .skin-avatar {
+  flex: none;
+  width: 42px;
+  height: 42px;
+}
+/* Safari search home: items in folder "搜索记录". */
+.ios18 .native-safari .safari-search-home {
+  display: grid;
+  justify-items: center;
+  gap: 22px;
+  padding: 64px 18px 12px;
+}
+.ios18 .native-safari .safari-search-wordmark {
+  font: 500 46px/1 "Product Sans", "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: -1px;
+}
+.ios18 .native-safari .safari-search-wordmark span:nth-child(1),
+.ios18 .native-safari .safari-search-wordmark span:nth-child(4) {
+  color: #4285f4;
+}
+.ios18 .native-safari .safari-search-wordmark span:nth-child(2),
+.ios18 .native-safari .safari-search-wordmark span:nth-child(6) {
+  color: #ea4335;
+}
+.ios18 .native-safari .safari-search-wordmark span:nth-child(3) {
+  color: #fbbc05;
+}
+.ios18 .native-safari .safari-search-wordmark span:nth-child(5) {
+  color: #34a853;
+}
+.ios18 .native-safari .safari-search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 46px;
+  padding: 0 16px;
+  border: 1px solid #dfe1e5;
+  border-radius: 23px;
+  background: #fff;
+  color: #70757a;
+  font-size: 16px;
+  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.12);
+}
+.ios18 .native-safari .safari-search-history {
+  width: 100%;
+  display: grid;
+  margin-top: -12px;
+  padding: 6px 0;
+  border-radius: 0 0 18px 18px;
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(32, 33, 36, 0.1);
+}
+.ios18 .native-safari .safari-search-history button {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 18px;
+  color: #202124;
+  font-size: 15px;
+  text-align: left;
+}
+.ios18 .native-safari .safari-search-history svg {
+  color: #70757a;
+  flex: none;
+}
+/* WhatsApp: system tips and locked chats. */
+.ios18 .whatsapp-ui .skin-system-tip {
+  align-self: center;
+  max-width: 80%;
+  margin: 6px auto 14px;
+  padding: 5px 10px;
+  border-radius: 7px;
+  background: #fff7d6;
+  color: #54656f;
+  font-size: 12px;
+  text-align: center;
+}
+.ios18 .whatsapp-ui .wa-chat-row.wa-locked p {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #8696a0;
+}
+.ios18 .whatsapp-ui .wa-locked-notice {
+  position: absolute;
+  left: 50%;
+  bottom: 110px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: max-content;
+  max-width: 86%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(32, 44, 51, 0.92);
+  color: #fff;
+  font-size: 13px;
+  transform: translateX(-50%);
+}
+.ios18 .whatsapp-ui {
+  position: relative;
+}
+.ios18 .native-safari .safari-search-history button {
+  width: 100%;
+  justify-content: flex-start;
+}
+/* WeChat group chats: sender name above incoming bubbles. */
+.ios18 .wechat-ui .skin-message:has(.wx-sender-name) {
+  display: grid;
+  grid-template-columns: 40px minmax(0, max-content);
+  grid-template-rows: auto auto;
+  column-gap: 10px;
+  row-gap: 4px;
+  justify-content: start;
+}
+.ios18 .wechat-ui .skin-message:has(.wx-sender-name) > .skin-avatar {
+  grid-row: 1 / span 2;
+}
+.ios18 .wechat-ui .wx-sender-name {
+  color: #8c8c8c;
+  font-size: 12px;
+  line-height: 1.2;
+}

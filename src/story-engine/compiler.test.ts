@@ -71,3 +71,38 @@ it("blank default has no story and needs no ending test", () => {
   expect(work.mode).toBe("explore");
   expect(testStory(story, work)).toEqual([]);
 });
+describe("story-defined decorative apps", () => {
+  const png =
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+  const story = (icon: string) => ({
+    scriptVersion: 1,
+    id: "custom-app",
+    title: "自定义 App",
+    phone: { owner: "机主" },
+    installedApps: [
+      "settings",
+      {
+        id: "photo-editor",
+        name: "修图",
+        installed: true,
+        visible: true,
+        dock: false,
+        folder: "",
+        icon,
+      },
+    ],
+  });
+  it("adds an unregistered app with an embedded icon after the catalog order", () => {
+    const { work } = compileStory(story(png));
+    const app = work.apps.find((a) => a.id === "photo-editor")!;
+    expect(app).toMatchObject({ name: "修图", installed: true, icon: png });
+    expect(work.apps.map((a) => a.id).indexOf("photo-editor")).toBe(1);
+    expect(work.apps).toHaveLength(50);
+  });
+  it("rejects an unregistered app without a safe embedded icon", () => {
+    expect(() => compileStory(story(""))).toThrow("自定义 App");
+    expect(() => compileStory(story("https://example.com/a.png"))).toThrow(
+      "自定义 App",
+    );
+  });
+});

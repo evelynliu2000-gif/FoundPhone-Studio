@@ -10,6 +10,8 @@ import {
   Users,
   Compass,
   User,
+  UserPlus,
+  Lock,
   Camera,
   Phone,
   Video,
@@ -38,6 +40,8 @@ export type SkinProps = {
   appId?: string;
   owner?: string;
   virtualTime?: string;
+  /** Current in-story date (YYYY-MM-DD), for date-based skins such as Calendar. */
+  virtualDate?: string;
   name: string;
   items: Item[];
   creator: boolean;
@@ -99,36 +103,50 @@ function MessageList({
   return (
     <div className={`skin-messages ${whatsapp ? "wa-wallpaper" : ""}`}>
       <div className="skin-date">{items[0]?.time.slice(0, 10)}</div>
-      {items.map((i) => (
-        <div
-          key={i.id}
-          className={`skin-message ${i.outgoing ? "outgoing" : ""}`}
-        >
-          {!whatsapp && !i.outgoing && (
-            <Avatar name={i.sender} src={i.avatar} />
-          )}
-          <button
-            className="skin-bubble"
-            onClick={() => (creator ? onItem(i) : onRead(i.id))}
+      {items.map((i) =>
+        i.kind === "event" ? (
+          <div key={i.id} className="skin-system-tip" role="note">
+            {i.body}
+          </div>
+        ) : (
+          <div
+            key={i.id}
+            className={`skin-message ${i.outgoing ? "outgoing" : ""}`}
           >
-            {["image", "audio", "video"].includes(i.kind) ? (
-              <ItemMedia item={i} />
-            ) : i.kind === "transfer" ? (
-              <div className="skin-transfer">
-                ¥ {i.body}
-                <small>转账记录 · 虚构</small>
-              </div>
-            ) : (
-              i.body
+            {!whatsapp && !i.outgoing && (
+              <Avatar name={i.sender} src={i.avatar} />
             )}
-            <small className={whatsapp ? undefined : "wx-message-time"}>
-              {i.time.slice(-5)}{" "}
-              {whatsapp && i.outgoing && <CheckCheck size={11} />}
-            </small>
-          </button>
-          {!whatsapp && i.outgoing && <Avatar name={i.sender} src={i.avatar} />}
-        </div>
-      ))}
+            {/* Group chats (3+ participants) show the sender's name, as WeChat does. */}
+            {!whatsapp &&
+              !i.outgoing &&
+              (i.meta?.participants ?? "").split(",").length > 2 && (
+                <span className="wx-sender-name">{i.sender}</span>
+              )}
+            <button
+              className="skin-bubble"
+              onClick={() => (creator ? onItem(i) : onRead(i.id))}
+            >
+              {["image", "audio", "video"].includes(i.kind) ? (
+                <ItemMedia item={i} />
+              ) : i.kind === "transfer" ? (
+                <div className="skin-transfer">
+                  ¥ {i.body}
+                  <small>转账记录 · 虚构</small>
+                </div>
+              ) : (
+                i.body
+              )}
+              <small className={whatsapp ? undefined : "wx-message-time"}>
+                {i.time.slice(-5)}{" "}
+                {whatsapp && i.outgoing && <CheckCheck size={11} />}
+              </small>
+            </button>
+            {!whatsapp && i.outgoing && (
+              <Avatar name={i.sender} src={i.avatar} />
+            )}
+          </div>
+        ),
+      )}
     </div>
   );
 }
@@ -166,12 +184,19 @@ export function WeChatSkin(p: SkinProps) {
   const conversations = [
     ...new Set(
       p.items
-        .filter((i) => !["朋友圈", "我"].includes(i.folder))
+        .filter((i) => !["朋友圈", "我", "新的朋友"].includes(i.folder))
         .map((i) => i.title),
     ),
   ];
+  // Friend requests (folder "新的朋友") are not contacts or conversations yet.
+  const requests = p.items.filter((i) => i.folder === "新的朋友");
   const contacts = [
-    ...new Set(p.items.map((i) => i.sender).filter((s) => s !== "我")),
+    ...new Set(
+      p.items
+        .filter((i) => i.folder !== "新的朋友")
+        .map((i) => i.sender)
+        .filter((s) => s !== "我" && s !== p.owner),
+    ),
   ];
   const posts = p.items.filter(
     (i) => i.folder === "朋友圈" || i.kind === "post",
@@ -260,18 +285,34 @@ export function WeChatSkin(p: SkinProps) {
               ))}
             </div>
           )}
-          {p.items
-            .filter((i) => i.folder === utility)
-            .map((i) => (
+          {utility === "新的朋友" &&
+            requests.map((i) => (
               <button
                 key={i.id}
-                className="wx-discovery"
+                className="wx-friend-request"
                 onClick={() => p.onItem(i)}
               >
-                {i.title}
-                <span>›</span>
+                <Avatar name={i.sender} src={i.avatar} />
+                <span>
+                  <strong>{i.sender}</strong>
+                  <small>{i.body}</small>
+                </span>
+                <em>接受</em>
               </button>
             ))}
+          {utility !== "新的朋友" &&
+            p.items
+              .filter((i) => i.folder === utility)
+              .map((i) => (
+                <button
+                  key={i.id}
+                  className="wx-discovery"
+                  onClick={() => p.onItem(i)}
+                >
+                  {i.title}
+                  <span>›</span>
+                </button>
+              ))}
           {!p.items.some((i) => i.folder === utility) &&
             utility !== "聊天信息" && <p className="skin-empty">暂无内容</p>}
         </div>
@@ -350,7 +391,13 @@ export function WeChatSkin(p: SkinProps) {
                       }}
                     >
                       <span className="wx-chat-avatar">
-                        <Avatar name={t} src={last.avatar} />
+                        {/* The other party's avatar, never the owner's own. */}
+                        <Avatar
+                          name={t}
+                          src={
+                            list.find((i) => !i.outgoing && i.avatar)?.avatar
+                          }
+                        />
                         {!readThreads.includes(t) &&
                           list.some((i) => !i.read) && (
                             <b className="wx-unread">
@@ -370,6 +417,18 @@ export function WeChatSkin(p: SkinProps) {
             </>
           ) : tab === "通讯录" ? (
             <>
+              <button
+                className="wx-contact wx-new-friends"
+                onClick={() => setUtility("新的朋友")}
+              >
+                <span className="wx-new-friends-icon">
+                  <UserPlus size={20} />
+                </span>
+                新的朋友
+                {requests.length > 0 && (
+                  <b className="wx-request-badge">{requests.length}</b>
+                )}
+              </button>
               <div className="wx-section-label">联系人</div>
               {contacts.map((c) => (
                 <button
@@ -419,7 +478,10 @@ export function WeChatSkin(p: SkinProps) {
           ) : (
             <>
               <div className="wx-profile">
-                <Avatar name={p.owner || "机主"} />
+                <Avatar
+                  name={p.owner || "机主"}
+                  src={p.items.find((i) => i.outgoing && i.avatar)?.avatar}
+                />
                 <div>
                   <h2>{p.owner || "机主"}</h2>
                   <small>微信号：未设置</small>
@@ -506,7 +568,11 @@ export function WeChatSkin(p: SkinProps) {
 export function WhatsAppSkin(p: SkinProps) {
   const [tab, setTab] = useState("聊天"),
     [query, setQuery] = useState(""),
-    [filter, setFilter] = useState("全部");
+    [filter, setFilter] = useState("全部"),
+    [lockedNotice, setLockedNotice] = useState("");
+  // Chats with meta.locked="true" appear in the list but cannot be opened.
+  const isLocked = (t: string) =>
+    p.items.some((i) => i.title === t && i.meta?.locked === "true");
   const tabs = [
     { label: "动态", icon: Compass },
     { label: "通话", icon: Phone },
@@ -547,6 +613,11 @@ export function WhatsAppSkin(p: SkinProps) {
           {p.creator ? <Plus size={21} /> : <Search size={20} />}
         </button>
       </div>
+      {lockedNotice && (
+        <div className="wa-locked-notice" role="status">
+          <Lock size={16} />“{lockedNotice}”的聊天已锁定，无法打开
+        </div>
+      )}
       {p.thread ? (
         <>
           <div className="wa-thread-profile">
@@ -608,11 +679,17 @@ export function WhatsAppSkin(p: SkinProps) {
                 )
                 .map((t) => {
                   const last = p.items.filter((i) => i.title === t).at(-1)!;
+                  const locked = isLocked(t) && !p.creator;
                   return (
                     <button
-                      className="wa-chat-row"
+                      className={`wa-chat-row ${locked ? "wa-locked" : ""}`}
                       key={t}
                       onClick={() => {
+                        if (locked) {
+                          setLockedNotice(t);
+                          setTimeout(() => setLockedNotice(""), 2200);
+                          return;
+                        }
                         p.onThread(t);
                         p.onRead(t);
                       }}
@@ -621,8 +698,16 @@ export function WhatsAppSkin(p: SkinProps) {
                       <div>
                         <strong>{t}</strong>
                         <p>
-                          {last.outgoing && <CheckCheck size={12} />}{" "}
-                          {last.body}
+                          {locked ? (
+                            <>
+                              <Lock size={12} /> 已锁定的聊天
+                            </>
+                          ) : (
+                            <>
+                              {last.outgoing && <CheckCheck size={12} />}{" "}
+                              {last.body}
+                            </>
+                          )}
                         </p>
                       </div>
                       <time>{last.time.slice(-5)}</time>

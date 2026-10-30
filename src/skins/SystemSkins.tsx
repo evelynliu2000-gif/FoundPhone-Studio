@@ -304,8 +304,14 @@ export function CameraSkin(p: Props) {
 }
 export function SafariSkin(p: Props) {
   const [q, setQ] = useState(""),
-    [tab, setTab] = useState("书签");
+    [tab, setTab] = useState("书签"),
+    [history, setHistory] = useState(false);
+  // Items in folder "搜索记录" make the start page a search home whose box
+  // reveals recent searches when tapped.
+  const searches = p.items.filter((i) => i.folder === "搜索记录");
+  const home = tab === "书签" && searches.length > 0 && !q;
   const items = p.items
+    .filter((i) => i.folder !== "搜索记录")
     .filter((i) =>
       (i.title + i.body + meta(i, "url"))
         .toLowerCase()
@@ -320,7 +326,39 @@ export function SafariSkin(p: Props) {
     <div className="catalog-skin native-safari">
       <Header p={p} />
       <div className="catalog-scroll">
-        <h1>{tab}</h1>
+        {home ? (
+          <div className="safari-search-home">
+            <div className="safari-search-wordmark" aria-label="Google">
+              {["G", "o", "o", "g", "l", "e"].map((c, n) => (
+                <span key={n}>{c}</span>
+              ))}
+            </div>
+            <button
+              className="safari-search-box"
+              aria-expanded={history}
+              onClick={() => setHistory(!history)}
+            >
+              <Search size={17} />
+              搜索
+            </button>
+            {history && (
+              <div className="safari-search-history" role="list">
+                {searches.map((i) => (
+                  <button
+                    role="listitem"
+                    key={i.id}
+                    onClick={() => p.onItem(i)}
+                  >
+                    <Clock size={16} />
+                    {i.title}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <h1>{tab}</h1>
+        )}
         <div className="safari-favorites">
           {items.map((i) => (
             <button key={i.id} onClick={() => p.onItem(i)}>
@@ -332,7 +370,7 @@ export function SafariSkin(p: Props) {
             </button>
           ))}
         </div>
-        <Empty items={items} label="没有匹配的虚构网页" />
+        {!home && <Empty items={items} label="没有匹配的虚构网页" />}
       </div>
       <label className="safari-address">
         <LockKeyhole size={13} />
@@ -409,9 +447,11 @@ export function NotesSkin(p: Props) {
   );
 }
 export function CalendarSkin(p: Props) {
-  const [month, setMonth] = useState(8),
-    [year, setYear] = useState(2026),
-    [day, setDay] = useState(1);
+  // Open on the story's current date; fall back to September 2026.
+  const today = /^(\d{4})-(\d{2})-(\d{2})$/.exec(p.virtualDate ?? "");
+  const [month, setMonth] = useState(today ? Number(today[2]) - 1 : 8),
+    [year, setYear] = useState(today ? Number(today[1]) : 2026),
+    [day, setDay] = useState(today ? Number(today[3]) : 1);
   const prefix = `${year}-${String(month + 1).padStart(2, "0")}`;
   const list = p.items.filter((i) =>
     i.time.startsWith(`${prefix}-${String(day).padStart(2, "0")}`),

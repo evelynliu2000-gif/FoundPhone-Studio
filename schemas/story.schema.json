@@ -643,7 +643,6 @@
         "required": [
           "name",
           "steps",
-          "ending",
           "expectUnlocked"
         ],
         "additionalProperties": false
