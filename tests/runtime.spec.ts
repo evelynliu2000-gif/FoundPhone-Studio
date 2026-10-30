@@ -12,6 +12,7 @@ test.beforeEach(async ({ page }) => {
   );
 });
 import { test, expect, type Page } from "@playwright/test";
+import { unlockPhone } from "./unlock";
 async function home(page: Page) {
   await page.getByRole("button", { name: "返回桌面", exact: true }).click();
   await expect(
@@ -161,7 +162,9 @@ test("mobile viewport, no overflow", async ({ page }) => {
 });
 test("production PWA cached story works after offline reload", async ({
   browser,
+  request,
 }) => {
+  const { phone } = await (await request.get("/work.json")).json();
   const context = await browser.newContext({ serviceWorkers: "allow" });
   try {
     const page = await context.newPage();
@@ -170,7 +173,7 @@ test("production PWA cached story works after offline reload", async ({
     await page.waitForFunction(() => !!navigator.serviceWorker.controller);
     await context.setOffline(true);
     await page.reload();
-    await page.getByRole("button", { name: "轻触解锁" }).click();
+    await unlockPhone(page, phone.passcode);
     await open(page, "设置");
     await expect(page.getByRole("switch", { name: "飞行模式" })).toBeVisible();
     await page

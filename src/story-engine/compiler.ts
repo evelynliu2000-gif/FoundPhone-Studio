@@ -90,7 +90,7 @@ export const storySchema = z
               password: z.string().optional(),
             }),
           ),
-          ending: z.string(),
+          ending: z.string().optional(),
           expectUnlocked: z.array(z.string()).default([]),
         }),
       )
@@ -192,6 +192,11 @@ export function compileStory(raw: unknown): { story: Story; work: Work } {
         !chat.participants.includes(m.senderId)
       )
         fail(`chats.${n}.messages.${j}.senderId`, "发信人不在会话中");
+      if (m.meta?.autoType === "true" && (m.senderId !== "owner" || !m.hidden))
+        fail(
+          `chats.${n}.messages.${j}`,
+          "自动输入消息需要 senderId 为 owner 且 hidden 为 true",
+        );
       const { senderId, ...item } = m;
       add(
         chat.app,
@@ -241,6 +246,13 @@ export function compileStory(raw: unknown): { story: Story; work: Work } {
     });
     if (n.event === "read" && n.target && !itemIds.has(n.target))
       fail(`events.${i}.target`, "不存在的内容");
+    if (
+      n.event === "send" &&
+      !Object.values(data)
+        .flat()
+        .some((i) => i.id === n.target && i.meta?.autoType === "true")
+    )
+      fail(`events.${i}.target`, "send 事件需要指向自动输入消息");
     if (n.event === "openApp" && n.target && !installed.has(n.target))
       fail(`events.${i}.target`, "事件 App 未安装");
     n.actions.forEach((a, j) => {

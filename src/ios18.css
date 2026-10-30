@@ -953,3 +953,16 @@
   font-size: 12px;
 }
 
+/* WeChat system tips (kind "event"), e.g. friend added / group invite. */
+.ios18 .wechat-ui .skin-system-tip {
+  align-self: center;
+  max-width: 78%;
+  margin: 4px auto 18px;
+  padding: 4px 9px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.05);
+  color: #8c8c8c;
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: center;
+}

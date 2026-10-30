@@ -171,6 +171,15 @@ export function dispatch(
   if (event === "openApp" && !s.visited.includes(target))
     s.visited.push(target);
   if (event === "read" && !s.read.includes(target)) s.read.push(target);
+  // Scripted composer: sending an autoType draft reveals that message.
+  if (
+    event === "send" &&
+    !s.unlocked.includes(target) &&
+    Object.values(w.data).some((items) =>
+      items.some((i) => i.id === target && i.meta?.autoType === "true"),
+    )
+  )
+    s.unlocked.push(target);
   if (w.mode === "explore") return s;
   const queue = w.nodes
     .filter(

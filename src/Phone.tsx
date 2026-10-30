@@ -20,6 +20,7 @@ import {
   ControlCenter,
   DeviceKeyboard,
   KeyboardContext,
+  ComposerScriptContext,
   NativeSettings,
 } from "./DeviceSystem";
 import { AppArtwork, hasNativeArtwork } from "./AppArtwork";
@@ -37,9 +38,11 @@ import {
   useEffect,
   useState,
   useRef,
+  useMemo,
   Suspense,
   type CSSProperties,
 } from "react";
+import { nextAutoType } from "./chat";
 import { AnimatePresence } from "motion/react";
 import {
   ChevronLeft,
@@ -137,7 +140,11 @@ function PhoneRuntime({
   const [locked, setLocked] = useState(!creator);
   const [pinOpen, setPinOpen] = useState(false);
   const [quickCamera, setQuickCamera] = useState(false);
-  const [keyboard, setKeyboard] = useState(false);
+  const [keyboard, setKeyboardState] = useState<false | { script: Item[] }>(
+    false,
+  );
+  const setKeyboard = (open: boolean, script: Item[] = []) =>
+    setKeyboardState(open ? { script } : false);
   const [recent, setRecent] = useState<string[]>([]);
   const appSnapshots = useRef(new Map<string, HTMLElement>());
   const [banner, setBanner] = useState("");
@@ -767,7 +774,14 @@ function PhoneRuntime({
               </div>
             </div>
           )}
-          {keyboard && <DeviceKeyboard close={() => setKeyboard(false)} />}
+          {keyboard && (
+            <DeviceKeyboard
+              key={keyboard.script.map((i) => i.id).join() || "manual"}
+              script={keyboard.script}
+              onSend={(id) => event("send", id)}
+              close={() => setKeyboard(false)}
+            />
+          )}
           {loadError && (
             <button className="runtime-error" onClick={() => setLoadError("")}>
               {loadError}
@@ -909,6 +923,10 @@ function AppContent({
     if (!i.password || unlocks.includes(i.id)) onRead(i.id);
   };
   const chats = [...new Set(shown.map((i) => i.title))];
+  const script = useMemo(
+    () => (creator || !thread ? [] : nextAutoType(items, thread, state)),
+    [creator, thread, items, state],
+  );
   const back = () => {
     if (detail) setDetail(null);
     else if (thread) setThread("");
@@ -984,24 +1002,28 @@ function AppContent({
     return (
       <>
         <div className="catalog-slot" hidden={!!detail}>
-          <Suspense fallback={<div className="catalog-loading">正在打开…</div>}>
-            <Skin
-              appId={app.id}
-              owner={work.phone.owner}
-              virtualTime={state.time}
-              ui={state.ui?.[app.id]}
-              onUi={creator ? undefined : onUi}
-              name={name}
-              items={shown}
-              creator={creator}
-              onRead={onRead}
-              onItem={read}
-              onAdd={onAdd}
-              onBack={onBack}
-              thread={thread}
-              onThread={setThread}
-            />
-          </Suspense>
+          <ComposerScriptContext.Provider value={script}>
+            <Suspense
+              fallback={<div className="catalog-loading">正在打开…</div>}
+            >
+              <Skin
+                appId={app.id}
+                owner={work.phone.owner}
+                virtualTime={state.time}
+                ui={state.ui?.[app.id]}
+                onUi={creator ? undefined : onUi}
+                name={name}
+                items={shown}
+                creator={creator}
+                onRead={onRead}
+                onItem={read}
+                onAdd={onAdd}
+                onBack={onBack}
+                thread={thread}
+                onThread={setThread}
+              />
+            </Suspense>
+          </ComposerScriptContext.Provider>
         </div>
         {detail &&
           (socialDetailApps.has(app.id) &&

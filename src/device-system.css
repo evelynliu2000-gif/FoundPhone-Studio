@@ -1324,3 +1324,23 @@
   grid-template-rows: repeat(6, 99px);
   grid-auto-rows: 99px;
 }
+/* Scripted composer: auto-typed drafts and their send button. */
+.ios18 .device-keyboard.is-auto-typing .keyboard-candidates,
+.ios18 .device-keyboard.is-auto-typing .keyboard-row,
+.ios18 .device-keyboard.is-auto-typing .keyboard-accessories {
+  pointer-events: none;
+}
+.ios18 .keyboard-draft .keyboard-send {
+  flex: none;
+  border: 0;
+  border-radius: 6px;
+  padding: 6px 13px;
+  background: #07c160;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  transition: filter 0.12s;
+}
+.ios18 .keyboard-draft .keyboard-send.is-pressed {
+  filter: brightness(0.82);
+}
