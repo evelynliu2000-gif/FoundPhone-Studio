@@ -40,7 +40,9 @@ test("Kingston: passcode, WeChat chats and scripted typing", async ({
   // Leo: history, then two typed messages, then reply.
   await openThread(phone, "Leo");
   await expect(thread(phone)).toContainText("你把厨房水池收拾一下");
-  await expect(thread(phone)).toContainText("OK");
+  await expect(thread(phone)).toContainText("我刚去看了发现你已经收拾完了");
+  // Opening the chat delivers Leo's message from the night before.
+  await expect(thread(phone)).toContainText("明天早上化妆叫我");
   await expect(thread(phone)).not.toContainText("起床了吗");
   await phone.getByRole("button", { name: "输入消息" }).click();
   await expect(phone.getByLabel("消息草稿")).toHaveValue(/起床/);
@@ -68,6 +70,7 @@ test("Kingston: passcode, WeChat chats and scripted typing", async ({
   await expect(thread(phone)).toContainText("昨晚我很开心");
   await expect(thread(phone)).toContainText("哥我们回北京还有机会做吗");
   await expect(thread(phone)).toContainText("看情况吧");
+  await expect(thread(phone)).toContainText("哥你们起床了吗？");
   await phone.getByRole("button", { name: "输入消息" }).click();
   await expect(thread(phone)).toContainText("你经纪人到了吗", {
     timeout: 15000,
@@ -76,12 +79,19 @@ test("Kingston: passcode, WeChat chats and scripted typing", async ({
   await phone.screenshot({ path: "outputs/kingston/sing-done.png" });
   await back(phone);
 
-  // 刘隽: two typed messages, two replies.
+  // 刘隽: opening delivers 到家了吗, then three typed messages, two replies.
   await openThread(phone, "刘隽");
-  await expect(thread(phone).locator(".skin-system-tip")).toHaveText(
-    "你已添加了刘隽，现在可以开始聊天了。",
+  await expect(thread(phone).locator(".skin-system-tip")).toHaveCount(0);
+  await expect(thread(phone).locator(".skin-bubble").first()).toContainText(
+    "到家了吗",
   );
   await phone.getByRole("button", { name: "输入消息" }).click();
+  await expect(thread(phone)).toContainText("到家了，抱歉昨晚太累了直接睡了", {
+    timeout: 15000,
+  });
+  await expect(thread(phone)).toContainText("昨天辛苦你了", {
+    timeout: 15000,
+  });
   await expect(thread(phone)).toContainText("要你多费心照顾他们两个", {
     timeout: 15000,
   });
@@ -124,11 +134,14 @@ test("Kingston: passcode, WeChat chats and scripted typing", async ({
     await expect(thread(phone)).toContainText(line);
   await back(phone);
 
-  // Group chat: creation tip, then Eva姐's notice and the replies with names.
+  // Group chat: no invite tip; Eva姐's notice and the replies with names.
   await openThread(phone, "ctbz办公室");
-  await expect(thread(phone).locator(".skin-system-tip")).toHaveText(
-    "你邀请Leo、Sing、Eva姐加入了群聊",
-  );
+  await expect(thread(phone).locator(".skin-system-tip")).toHaveCount(0);
+  // Kingston's and Sing's quick replies carry no time; Eva's and Leo's do.
+  await expect(thread(phone).locator(".wx-message-time")).toHaveText([
+    "21:03",
+    "22:32",
+  ]);
   await expect(thread(phone).locator(".skin-bubble")).toContainText([
     "@全体成员 明天早上10点化妆师会来，下午一点准时出发，辛苦各位明天早起～",
     "收到",
@@ -259,7 +272,7 @@ test("Kingston: WhatsApp, Spotify, Threads, Taobao, delivery and WeChat friend r
   await phone.getByRole("button", { name: /新的朋友/ }).click();
   await expect(phone.locator(".wx-friend-request")).toContainText("汪佳辰");
   await shot("wechat-new-friends");
-  await phone.locator(".wx-friend-request").click();
+  await phone.locator(".wx-request-main").click();
   await expect(phone).toContainText(
     "我听说你回国了，如果有机会你来上海，我们还能再见面吗？我很想你。",
   );
@@ -517,4 +530,185 @@ test("Kingston: WeChat avatars for Kingston, Leo and Sing", async ({
     "src",
     ownSrc!,
   );
+});
+test("Kingston: wallpaper, model, health alert, Alipay, 小红书, notes, photos", async ({
+  page,
+}) => {
+  test.setTimeout(60000);
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/");
+  const phone = page.locator(".phone-screen");
+  await expect(phone).toHaveClass(/wallpaper-custom/);
+  await expect(phone).toHaveCSS("background-image", /data:image\/jpeg/);
+  await phone.screenshot({ path: "outputs/kingston/lock-wallpaper.png" });
+  await phone.getByRole("button", { name: "轻触解锁" }).click();
+  for (const n of "0306")
+    await phone
+      .getByRole("button", { name: "密码键" + n, exact: true })
+      .click();
+  await expect(phone.locator(".home-screen")).toBeVisible();
+  await phone.screenshot({ path: "outputs/kingston/home-wallpaper.png" });
+  for (const gone of ["微博", "钱包", "抖音", "YouTube", "Instagram"])
+    await expect(
+      phone.getByRole("button", { name: "打开" + gone, exact: true }),
+    ).toHaveCount(0);
+  const openApp = async (name: string) => {
+    await phone.getByRole("button", { name: "返回桌面", exact: true }).click();
+    const icon = phone.getByRole("button", {
+      name: "打开" + name,
+      exact: true,
+    });
+    if (!(await icon.isVisible())) {
+      const box = (await phone.boundingBox())!;
+      await page.mouse.move(box.x + box.width * 0.85, box.y + 400);
+      await page.mouse.down();
+      await page.mouse.move(box.x + box.width * 0.15, box.y + 400, {
+        steps: 8,
+      });
+      await page.mouse.up();
+    }
+    await icon.click();
+    await expect(page.locator(".app-screen:not([inert])")).toHaveCSS(
+      "transform",
+      "none",
+    );
+  };
+  const shot = (name: string) =>
+    phone.screenshot({ path: `outputs/kingston/${name}.png` });
+
+  await openApp("设置");
+  await phone.getByRole("button", { name: "通用", exact: true }).click();
+  await phone.getByRole("button", { name: "关于本机", exact: true }).click();
+  await expect(phone.getByText("iPhone 18 Pro", { exact: true })).toBeVisible();
+
+  await openApp("健康");
+  await expect(
+    page.getByText(/过去 7 晚，你的睡眠评分均低于 60 分/).first(),
+  ).toBeVisible();
+  await shot("health-alert");
+  await phone.locator(".health-card-sleep").click();
+  await expect(phone.locator(".health-detail-value")).toContainText("52");
+  await shot("health-sleep");
+
+  await openApp("支付宝");
+  await expect(phone.getByText("交易成功").first()).toBeVisible();
+  await shot("alipay");
+
+  await openApp("小红书");
+  for (const t of [
+    "二手劳力士价格涨幅｜这几款闭眼入不亏",
+    "合同违约金到底怎么算？一篇讲清楚",
+    "北京绝佳约会地点合集｜氛围感拉满",
+    "如何偷情不被老公发现",
+  ])
+    await expect(phone.getByText(t).first()).toBeVisible();
+  await shot("redbook");
+
+  await openApp("备忘录");
+  await expect(phone.locator(".notes-list button")).toHaveCount(3);
+  await expect(phone.locator(".notes-list")).toContainText("已锁定的备忘录");
+  await expect(phone.locator(".notes-list")).not.toContainText("destination");
+  await shot("notes-list");
+  await phone.locator(".notes-list button", { hasText: "采购清单" }).click();
+  const tasks = phone.locator(".rich-task");
+  await expect(tasks).toHaveText(["垃圾袋", "山楂条", "咖啡粉", "套", "oil"]);
+  await tasks.nth(0).getByRole("checkbox").click();
+  await expect(tasks.nth(0)).toHaveClass(/is-done/);
+  await shot("notes-checklist");
+  await phone.getByRole("button", { name: "返回" }).first().click();
+  await phone.locator(".notes-list button", { hasText: "上床日记" }).click();
+  await expect(phone.getByText("这条内容已锁定")).toBeVisible();
+  await expect(phone.getByText(/我今天居然/)).toHaveCount(0);
+  await shot("notes-locked");
+
+  await openApp("相册");
+  await expect(phone.locator(".photo-mosaic img")).toHaveCount(18);
+  await shot("photos");
+  expect(errors).toEqual([]);
+});
+test("Kingston: 新的朋友 red dot, add 汪佳辰, and Leo after Taobao", async ({
+  page,
+}) => {
+  test.setTimeout(90000);
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/");
+  const phone = page.locator(".phone-screen");
+  await phone.getByRole("button", { name: "轻触解锁" }).click();
+  for (const n of "0306")
+    await phone
+      .getByRole("button", { name: "密码键" + n, exact: true })
+      .click();
+  await phone.getByRole("button", { name: "打开微信", exact: true }).click();
+  await expect(phone.locator(".wx-tab-dot")).toBeVisible();
+  await expect(
+    phone.locator(".wx-chat-row", { hasText: "汪佳辰" }),
+  ).toHaveCount(0);
+  await phone.screenshot({ path: "outputs/kingston/wechat-tab-dot.png" });
+  await phone.getByRole("button", { name: "通讯录", exact: true }).click();
+  await phone.getByRole("button", { name: /新的朋友/ }).click();
+  await phone.getByRole("button", { name: "添加", exact: true }).click();
+  // Lands in the new chat: the request message, then 我很想你.
+  await expect(phone.locator(".wechat-ui")).toHaveAttribute(
+    "data-thread",
+    "true",
+  );
+  const thread = phone.locator(".wechat-ui .skin-messages");
+  await expect(thread).toContainText("我听说你回国了");
+  // The request text itself ends with 我很想你。; wait for the separate message.
+  await expect(thread.locator(".skin-message:not(.outgoing)")).toHaveCount(2, {
+    timeout: 8000,
+  });
+  await expect(
+    thread.locator(".skin-message:not(.outgoing) .skin-bubble").last(),
+  ).toContainText("我很想你");
+  await phone.getByRole("button", { name: "输入消息" }).click();
+  await expect(thread).toContainText("最近没有去上海的行程", {
+    timeout: 15000,
+  });
+  const draft = phone.getByLabel("消息草稿");
+  await expect(draft).toHaveValue("我们已经分手了。", { timeout: 8000 });
+  await phone.screenshot({ path: "outputs/kingston/jiachen-draft.png" });
+  await expect(phone.locator(".device-keyboard")).toHaveCount(0, {
+    timeout: 8000,
+  });
+  await expect(thread).not.toContainText("我们已经分手了");
+  await expect(thread.locator(".skin-message.outgoing")).toHaveCount(2);
+  await phone.screenshot({ path: "outputs/kingston/jiachen-done.png" });
+  await phone.locator(".wx-nav").getByRole("button", { name: "返回" }).click();
+  await expect(phone.locator(".wx-tab-dot")).toHaveCount(0);
+  await phone.getByRole("button", { name: "通讯录", exact: true }).click();
+  await expect(phone.locator(".wx-request-badge")).toHaveCount(0);
+  await phone.getByRole("button", { name: /新的朋友/ }).click();
+  await expect(phone.locator(".wx-request-added")).toHaveText("已添加");
+  await phone.locator(".wx-nav").getByRole("button", { name: "返回" }).click();
+
+  // Leo: finish the first round, then Taobao delivers his message and the
+  // argument plays out over two typed rounds.
+  await phone.getByRole("button", { name: "微信", exact: true }).click();
+  await phone.locator(".wx-chat-row", { hasText: "Leo" }).click();
+  await phone.getByRole("button", { name: "输入消息" }).click();
+  await expect(thread).toContainText("起来了", { timeout: 15000 });
+  await phone.getByRole("button", { name: "返回桌面", exact: true }).click();
+  await phone.getByRole("button", { name: "打开淘宝", exact: true }).click();
+  await expect(page.getByText("昨天套子用完了，该买了").first()).toBeVisible();
+  await phone.getByRole("button", { name: "返回桌面", exact: true }).click();
+  await phone.getByRole("button", { name: "打开微信", exact: true }).click();
+  await phone.locator(".wx-chat-row", { hasText: "Leo" }).click();
+  await phone.getByRole("button", { name: "输入消息" }).click();
+  await expect(thread).toContainText("我记得回香港之前还有的啊", {
+    timeout: 15000,
+  });
+  await expect(thread).toContainText("不会是你拿走跟sing用了吧？", {
+    timeout: 10000,
+  });
+  await phone.getByRole("button", { name: "输入消息" }).click();
+  await expect(thread).toContainText("就是你拿回香港用了吧，痴线", {
+    timeout: 15000,
+  });
+  // The chat follows the conversation: the newest message is on screen.
+  await expect(thread.locator(".skin-message").last()).toBeInViewport();
+  await phone.screenshot({ path: "outputs/kingston/leo-argument.png" });
+  expect(errors).toEqual([]);
 });

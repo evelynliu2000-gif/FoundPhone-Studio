@@ -741,3 +741,19 @@
   background: #fafafa;
   color: #ffadb7;
 }
+
+/* Story wallpaper supplied as an embedded image (phone.wallpaper data URL). */
+.ios18 .wallpaper-custom {
+  background-color: #111;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.ios18 .wallpaper-custom .wallpaper-orb {
+  display: none;
+}
+.ios18 .wallpaper-custom:not(.in-app) .status-bar,
+.ios18 .wallpaper-custom .app-name {
+  color: white;
+  text-shadow: 0 1px 3px #0006;
+}

@@ -22,7 +22,12 @@ export function testStory(story: Story, work: Work) {
         }
         unlocked.add(item.id);
       }
-      if (step.event === "read") {
+      const opensChat =
+        step.event === "read" &&
+        Object.values(work.data)
+          .flat()
+          .some((x) => x.meta?.conversationId && x.title === step.target);
+      if (step.event === "read" && !opensChat) {
         const item = Object.values(work.data)
           .flat()
           .find((x) => x.id === step.target);

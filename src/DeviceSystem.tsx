@@ -457,10 +457,12 @@ export function DeviceKeyboard({
           await wait(450);
         }
         await type(item.body);
-        await wait(550);
-        if (cancelled) return;
-        setPressing(true);
-        await wait(180);
+        if (item.body) {
+          await wait(550);
+          if (cancelled) return;
+          setPressing(true);
+          await wait(180);
+        }
         if (cancelled) return;
         onSend?.(item.id);
         setValue("");

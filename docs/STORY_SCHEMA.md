@@ -16,6 +16,16 @@
 
 各ID全局唯一且稳定；不要使用随机UUID。默认值由编译器补齐，未知字段拒绝，不会执行脚本。时间线使用 time 事件、delay节点及 date/time动作；来电使用call动作，接听callAnswered。条件使用变量以及 read:/visited:/unlocked:/completed:/clue:/ui: 等原引擎作用域。unlock动作解锁隐藏内容；password是内容密码，测试read前必须提供正确password。玩家选择用choice节点的next或choice动作关联目标节点。商店/账单/社交/通话/日历使用对应 App 的content与meta字段，详见APP_DEVELOPMENT.md。
 
+## 手机外观与聊天细节
+
+- `phone.wallpaper` 可以是内嵌图片（data URL），作为锁屏和桌面壁纸；`phone.model` 设置“关于本机”里的机型名称。
+- `read` 事件的 target 可以是会话标题：玩家打开该聊天时触发，适合“点开聊天才收到的消息”。
+- 自动输入消息的 `body` 为空、只有 `meta.retract` 时，会打出这段文字再删掉，什么也不发送。
+- `kind: "event"` 且 `body` 为空的消息不显示，只提供 `avatar` 作为会话头像（例如群头像）。
+- `meta.hideTime: "true"` 的消息不显示时间。三人以上的微信群会在消息上方显示发送人名字。
+- 微信 `folder: "新的朋友"` 是好友申请：通讯录标签显示红点，点“添加”会触发 `variable` 事件，target 为 `ui:wechat:friend:<申请 id>`，并打开与申请人同名的会话。
+- 备忘录 `richText` 支持 `taskList` / `taskItem`（`attrs.checked`）勾选清单。
+
 ## 仅显示图标的自定义 App
 
 installedApps 中的对象可以使用未注册的 App ID（小写英文），但必须同时提供 name 和内嵌图片 icon（data URL，格式与 media 相同）。它们会出现在桌面上，点开是空白页，不出现在其他作品的 App 目录里。图标请使用作者有权使用的图片。

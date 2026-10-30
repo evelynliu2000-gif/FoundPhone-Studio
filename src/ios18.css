@@ -1151,3 +1151,60 @@
   font-size: 12px;
   line-height: 1.2;
 }
+/* 新的朋友: request row with 添加 / 已添加. */
+.ios18 .wechat-ui .wx-request-main {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+.ios18 .wechat-ui .wx-request-main > span {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+.ios18 .wechat-ui .wx-request-main strong {
+  font-size: 15px;
+  font-weight: 500;
+}
+.ios18 .wechat-ui .wx-request-main small {
+  color: #999;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ios18 .wechat-ui .wx-request-main .skin-avatar {
+  flex: none;
+  width: 42px;
+  height: 42px;
+}
+.ios18 .wechat-ui .wx-request-add {
+  flex: none;
+  padding: 5px 12px;
+  border-radius: 4px;
+  background: #07c160;
+  color: white;
+  font-size: 13px;
+}
+.ios18 .wechat-ui .wx-request-added {
+  flex: none;
+  color: #b2b2b2;
+  font-size: 13px;
+}
+/* Red dot on the 通讯录 tab while a friend request is pending. */
+.ios18 .wechat-ui .wx-bottom button {
+  position: relative;
+}
+.ios18 .wechat-ui .wx-tab-dot {
+  position: absolute;
+  top: 3px;
+  left: calc(50% + 7px);
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #fa5151;
+}

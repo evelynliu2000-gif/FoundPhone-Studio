@@ -94,7 +94,7 @@ export function NativeSettings({
           <div className="settings-group">
             {row("名称", work.phone.owner + "的 iPhone")}
             {row("iOS 版本", "18.0")}
-            {row("机型名称", "iPhone 15 Pro")}
+            {row("机型名称", work.phone.model || "iPhone 15 Pro")}
             {row("照片", String(work.data.photos?.length || 0))}
             {row(
               "应用程序",

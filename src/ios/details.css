@@ -214,3 +214,46 @@
   background: none;
   color: #007aff;
 }
+/* iOS Notes checklist (rich text taskList / taskItem). */
+.ios18 .rich-checklist {
+  list-style: none;
+  margin: 6px 0;
+  padding: 0;
+}
+.ios18 .rich-task {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 7px 0;
+}
+.ios18 .rich-task > button {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border: 1.5px solid #c7c7cc;
+  border-radius: 50%;
+  background: transparent;
+  position: relative;
+}
+.ios18 .rich-task.is-done > button {
+  border-color: #e5a50a;
+  background: #e5a50a;
+}
+.ios18 .rich-task.is-done > button::after {
+  content: "";
+  position: absolute;
+  left: 6.5px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.ios18 .rich-task.is-done > div {
+  color: #8e8e93;
+}
+.ios18 .rich-task > div p {
+  margin: 0;
+}

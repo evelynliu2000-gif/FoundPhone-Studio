@@ -256,8 +256,14 @@ export function compileStory(raw: unknown): { story: Story; work: Work } {
     n.next.forEach((x, j) => {
       if (!nodeIds.has(x)) fail(`events.${i}.next.${j}`, "不存在的节点: " + x);
     });
-    if (n.event === "read" && n.target && !itemIds.has(n.target))
-      fail(`events.${i}.target`, "不存在的内容");
+    // "read" fires for an item, or for a conversation when its chat is opened.
+    if (
+      n.event === "read" &&
+      n.target &&
+      !itemIds.has(n.target) &&
+      !s.chats.some((c) => c.title === n.target)
+    )
+      fail(`events.${i}.target`, "不存在的内容或会话");
     if (
       n.event === "send" &&
       !Object.values(data)
