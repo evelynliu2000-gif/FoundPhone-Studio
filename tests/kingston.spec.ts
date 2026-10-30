@@ -415,3 +415,40 @@ test("Kingston: calls, SMS, Google history, calendar, mail, WhatsApp, Netflix an
   await shot("netflix");
   expect(errors).toEqual([]);
 });
+test("Kingston: decorative photo apps sit on the home screen with their icons", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/");
+  const phone = page.locator(".phone-screen");
+  await phone.getByRole("button", { name: "轻触解锁" }).click();
+  for (const n of "0306")
+    await phone
+      .getByRole("button", { name: "密码键" + n, exact: true })
+      .click();
+  await expect(phone.locator(".home-screen")).toBeVisible();
+  const box = (await phone.boundingBox())!;
+  await page.mouse.move(box.x + box.width * 0.85, box.y + 400);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.15, box.y + 400, { steps: 8 });
+  await page.mouse.up();
+  for (const name of ["醒图", "Dazz Cam", "美图秀秀"]) {
+    const icon = phone.getByRole("button", {
+      name: "打开" + name,
+      exact: true,
+    });
+    await expect(icon).toBeVisible();
+    await expect(icon.locator("img")).toHaveAttribute(
+      "src",
+      /^data:image\/png;base64,/,
+    );
+  }
+  await page.waitForTimeout(400);
+  await phone.screenshot({ path: "outputs/kingston/home-page-2.png" });
+  await phone
+    .getByRole("button", { name: "打开美图秀秀", exact: true })
+    .click();
+  await expect(page.locator(".app-screen:not([inert])")).toBeVisible();
+  expect(errors).toEqual([]);
+});

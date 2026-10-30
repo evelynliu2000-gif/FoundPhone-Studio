@@ -14,9 +14,10 @@ test("published default is the template story, preview stays the test phone, fou
   expect(work).toEqual(template);
   expect(preview.id).toBe("ui-test-phone-v2");
   expect(preview.nodes).toHaveLength(0);
-  // The full catalog stays registered; the story decides what is installed.
-  expect(work.apps.map((a: { id: string }) => a.id).sort()).toEqual(
-    preview.apps.map((a: { id: string }) => a.id).sort(),
+  // The full catalog stays registered; the story decides what is installed
+  // and may add its own icon-only apps.
+  expect(work.apps.map((a: { id: string }) => a.id)).toEqual(
+    expect.arrayContaining(preview.apps.map((a: { id: string }) => a.id)),
   );
   expect(
     work.apps.filter(

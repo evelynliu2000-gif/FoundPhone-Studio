@@ -128,9 +128,21 @@ export function compileStory(raw: unknown): { story: Story; work: Work } {
   );
   if (new Set(configuredIds).size !== s.installedApps.length)
     fail("installedApps", "App 重复");
+  // Story-only decorative apps: an unregistered id is allowed when the entry
+  // supplies a name and an embedded icon image. They show on the home screen
+  // and open to an empty page.
+  const customApps: Work["apps"] = [];
   s.installedApps.forEach((a, i) => {
-    if (!registry.some((r) => r.id === (typeof a === "string" ? a : a.id)))
-      fail(`installedApps.${i}`, "未注册的 App");
+    const appId = typeof a === "string" ? a : a.id;
+    if (registry.some((r) => r.id === appId)) return;
+    if (typeof a === "string" || !safeMedia(a.icon) || !a.name)
+      fail(
+        `installedApps.${i}`,
+        "未注册的 App（自定义 App 需要 name 和内嵌图标 icon）",
+      );
+    if (!/^[a-z][a-z0-9-]*$/.test(appId))
+      fail(`installedApps.${i}.id`, "自定义 App 需要小写英文 ID");
+    customApps.push({ ...(a as Work["apps"][number]) });
   });
   const data: Work["data"] = {};
   const add = (
@@ -292,17 +304,8 @@ export function compileStory(raw: unknown): { story: Story; work: Work } {
       notifications: true,
       ...s.phone,
     },
-    apps: [...registry]
-      .sort((a, b) => {
-        const ids = s.installedApps.map((x) =>
-          typeof x === "string" ? x : x.id,
-        );
-        return (
-          (ids.includes(a.id) ? ids.indexOf(a.id) : 999) -
-          (ids.includes(b.id) ? ids.indexOf(b.id) : 999)
-        );
-      })
-      .map((r) => {
+    apps: [
+      ...registry.map((r) => {
         const custom = s.installedApps.find(
           (a) => typeof a !== "string" && a.id === r.id,
         );
@@ -317,6 +320,16 @@ export function compileStory(raw: unknown): { story: Story; work: Work } {
           ...(typeof custom === "object" ? custom : {}),
         };
       }),
+      ...customApps,
+    ].sort((a, b) => {
+      const ids = s.installedApps.map((x) =>
+        typeof x === "string" ? x : x.id,
+      );
+      return (
+        (ids.includes(a.id) ? ids.indexOf(a.id) : 999) -
+        (ids.includes(b.id) ? ids.indexOf(b.id) : 999)
+      );
+    }),
     data,
     nodes,
     variables: s.variables,

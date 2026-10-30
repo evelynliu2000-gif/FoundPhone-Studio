@@ -16,6 +16,10 @@
 
 各ID全局唯一且稳定；不要使用随机UUID。默认值由编译器补齐，未知字段拒绝，不会执行脚本。时间线使用 time 事件、delay节点及 date/time动作；来电使用call动作，接听callAnswered。条件使用变量以及 read:/visited:/unlocked:/completed:/clue:/ui: 等原引擎作用域。unlock动作解锁隐藏内容；password是内容密码，测试read前必须提供正确password。玩家选择用choice节点的next或choice动作关联目标节点。商店/账单/社交/通话/日历使用对应 App 的content与meta字段，详见APP_DEVELOPMENT.md。
 
+## 仅显示图标的自定义 App
+
+installedApps 中的对象可以使用未注册的 App ID（小写英文），但必须同时提供 name 和内嵌图片 icon（data URL，格式与 media 相同）。它们会出现在桌面上，点开是空白页，不出现在其他作品的 App 目录里。图标请使用作者有权使用的图片。
+
 ## 自动输入（机主自己发消息）
 
 玩家点击聊天输入框时，键盘会按剧本逐字打出机主的消息并自动发送。做法是在 chats 的消息里标记：
