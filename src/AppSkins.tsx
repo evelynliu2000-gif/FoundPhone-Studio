@@ -385,7 +385,13 @@ export function WeChatSkin(p: SkinProps) {
                       }}
                     >
                       <span className="wx-chat-avatar">
-                        <Avatar name={t} src={last.avatar} />
+                        {/* The other party's avatar, never the owner's own. */}
+                        <Avatar
+                          name={t}
+                          src={
+                            list.find((i) => !i.outgoing && i.avatar)?.avatar
+                          }
+                        />
                         {!readThreads.includes(t) &&
                           list.some((i) => !i.read) && (
                             <b className="wx-unread">
@@ -466,7 +472,10 @@ export function WeChatSkin(p: SkinProps) {
           ) : (
             <>
               <div className="wx-profile">
-                <Avatar name={p.owner || "机主"} />
+                <Avatar
+                  name={p.owner || "机主"}
+                  src={p.items.find((i) => i.outgoing && i.avatar)?.avatar}
+                />
                 <div>
                   <h2>{p.owner || "机主"}</h2>
                   <small>微信号：未设置</small>

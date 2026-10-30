@@ -452,3 +452,39 @@ test("Kingston: decorative photo apps sit on the home screen with their icons", 
   await expect(page.locator(".app-screen:not([inert])")).toBeVisible();
   expect(errors).toEqual([]);
 });
+test("Kingston: WeChat avatars for Kingston, Leo and Sing", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const phone = page.locator(".phone-screen");
+  await phone.getByRole("button", { name: "轻触解锁" }).click();
+  for (const n of "0306")
+    await phone
+      .getByRole("button", { name: "密码键" + n, exact: true })
+      .click();
+  await phone.getByRole("button", { name: "打开微信", exact: true }).click();
+  const row = (t: string) =>
+    phone.locator(".wx-chat-row", { has: page.getByText(t, { exact: true }) });
+  const leoSrc = await row("Leo").locator("img").getAttribute("src");
+  const singSrc = await row("Sing").locator("img").getAttribute("src");
+  expect(leoSrc).toMatch(/^data:image\/jpeg/);
+  expect(singSrc).toMatch(/^data:image\/jpeg/);
+  expect(leoSrc).not.toBe(singSrc);
+  await expect(row("刘隽").locator("img")).toHaveCount(0);
+  await phone.screenshot({ path: "outputs/kingston/avatars-list.png" });
+  await row("Leo").click();
+  const own = phone.locator(".skin-message.outgoing img").first();
+  const ownSrc = await own.getAttribute("src");
+  expect(ownSrc).toMatch(/^data:image\/jpeg/);
+  expect(ownSrc).not.toBe(leoSrc);
+  await expect(
+    phone.locator(".skin-message:not(.outgoing) img").first(),
+  ).toHaveAttribute("src", leoSrc!);
+  await phone.screenshot({ path: "outputs/kingston/avatars-thread.png" });
+  await phone.locator(".wx-nav").getByRole("button", { name: "返回" }).click();
+  await phone.getByRole("button", { name: "我", exact: true }).click();
+  await expect(phone.locator(".wx-profile img")).toHaveAttribute(
+    "src",
+    ownSrc!,
+  );
+});
