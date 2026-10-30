@@ -11,6 +11,7 @@ import {
   Compass,
   User,
   UserPlus,
+  Lock,
   Camera,
   Phone,
   Video,
@@ -39,6 +40,8 @@ export type SkinProps = {
   appId?: string;
   owner?: string;
   virtualTime?: string;
+  /** Current in-story date (YYYY-MM-DD), for date-based skins such as Calendar. */
+  virtualDate?: string;
   name: string;
   items: Item[];
   creator: boolean;
@@ -101,7 +104,7 @@ function MessageList({
     <div className={`skin-messages ${whatsapp ? "wa-wallpaper" : ""}`}>
       <div className="skin-date">{items[0]?.time.slice(0, 10)}</div>
       {items.map((i) =>
-        !whatsapp && i.kind === "event" ? (
+        i.kind === "event" ? (
           <div key={i.id} className="skin-system-tip" role="note">
             {i.body}
           </div>
@@ -550,7 +553,11 @@ export function WeChatSkin(p: SkinProps) {
 export function WhatsAppSkin(p: SkinProps) {
   const [tab, setTab] = useState("聊天"),
     [query, setQuery] = useState(""),
-    [filter, setFilter] = useState("全部");
+    [filter, setFilter] = useState("全部"),
+    [lockedNotice, setLockedNotice] = useState("");
+  // Chats with meta.locked="true" appear in the list but cannot be opened.
+  const isLocked = (t: string) =>
+    p.items.some((i) => i.title === t && i.meta?.locked === "true");
   const tabs = [
     { label: "动态", icon: Compass },
     { label: "通话", icon: Phone },
@@ -591,6 +598,11 @@ export function WhatsAppSkin(p: SkinProps) {
           {p.creator ? <Plus size={21} /> : <Search size={20} />}
         </button>
       </div>
+      {lockedNotice && (
+        <div className="wa-locked-notice" role="status">
+          <Lock size={16} />“{lockedNotice}”的聊天已锁定，无法打开
+        </div>
+      )}
       {p.thread ? (
         <>
           <div className="wa-thread-profile">
@@ -652,11 +664,17 @@ export function WhatsAppSkin(p: SkinProps) {
                 )
                 .map((t) => {
                   const last = p.items.filter((i) => i.title === t).at(-1)!;
+                  const locked = isLocked(t) && !p.creator;
                   return (
                     <button
-                      className="wa-chat-row"
+                      className={`wa-chat-row ${locked ? "wa-locked" : ""}`}
                       key={t}
                       onClick={() => {
+                        if (locked) {
+                          setLockedNotice(t);
+                          setTimeout(() => setLockedNotice(""), 2200);
+                          return;
+                        }
                         p.onThread(t);
                         p.onRead(t);
                       }}
@@ -665,8 +683,16 @@ export function WhatsAppSkin(p: SkinProps) {
                       <div>
                         <strong>{t}</strong>
                         <p>
-                          {last.outgoing && <CheckCheck size={12} />}{" "}
-                          {last.body}
+                          {locked ? (
+                            <>
+                              <Lock size={12} /> 已锁定的聊天
+                            </>
+                          ) : (
+                            <>
+                              {last.outgoing && <CheckCheck size={12} />}{" "}
+                              {last.body}
+                            </>
+                          )}
                         </p>
                       </div>
                       <time>{last.time.slice(-5)}</time>

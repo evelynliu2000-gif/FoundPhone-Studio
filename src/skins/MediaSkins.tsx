@@ -490,8 +490,13 @@ export function NetflixSkin(p: Props) {
             <div>
               <strong>{featured.title}</strong>
               <small>
-                {meta(featured, "year")} · {meta(featured, "genre")} ·{" "}
-                {meta(featured, "duration")}
+                {[
+                  meta(featured, "year"),
+                  meta(featured, "genre"),
+                  meta(featured, "duration"),
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
               </small>
               <button onClick={() => p.onItem(featured)}>
                 <Play size={16} />

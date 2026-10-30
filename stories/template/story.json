@@ -3,7 +3,7 @@
   "id": "kingston-phone",
   "title": "捡手机",
   "description": "Kingston 的手机。",
-  "revision": 4,
+  "revision": 5,
   "phone": {
     "owner": "Kingston",
     "date": "2026-10-25",
@@ -101,6 +101,21 @@
       "id": "ziyu",
       "name": "梓渝",
       "bio": ""
+    },
+    {
+      "id": "sister",
+      "name": "姐姐",
+      "bio": ""
+    },
+    {
+      "id": "dad",
+      "name": "Dad",
+      "bio": ""
+    },
+    {
+      "id": "mom",
+      "name": "Mom",
+      "bio": ""
     }
   ],
   "chats": [
@@ -150,6 +165,13 @@
           "body": "起来了",
           "senderId": "leo",
           "time": "2026-10-25 08:54",
+          "hidden": true
+        },
+        {
+          "id": "leo-condoms",
+          "body": "昨天套子用完了，该买了",
+          "senderId": "leo",
+          "time": "2026-10-25 08:58",
           "hidden": true
         }
       ]
@@ -382,6 +404,294 @@
           "body": "Who's that guy you posted on Insta?",
           "senderId": "abigail",
           "time": "2026-10-25 02:16"
+        }
+      ]
+    },
+    {
+      "id": "chat-sms-yto",
+      "app": "messages",
+      "title": "圆通速递 张师傅",
+      "participants": [
+        "owner"
+      ],
+      "messages": [
+        {
+          "id": "chat-sms-yto-1",
+          "body": "【圆通速递】您好，您的快递已按您的要求放在门口，请及时查收。如有问题请联系快递员。",
+          "sender": "圆通速递 张师傅",
+          "time": "2026-10-15 11:05"
+        },
+        {
+          "id": "chat-sms-yto-2",
+          "body": "【圆通速递】您好，您的快递已按您的要求放在门口，请及时查收。如有问题请联系快递员。",
+          "sender": "圆通速递 张师傅",
+          "time": "2026-10-19 16:40"
+        },
+        {
+          "id": "chat-sms-yto-3",
+          "body": "【圆通速递】您好，您的快递已按您的要求放在门口，请及时查收。如有问题请联系快递员。",
+          "sender": "圆通速递 张师傅",
+          "time": "2026-10-23 14:12"
+        }
+      ]
+    },
+    {
+      "id": "chat-sms-sf",
+      "app": "messages",
+      "title": "顺丰速运 李师傅",
+      "participants": [
+        "owner"
+      ],
+      "messages": [
+        {
+          "id": "chat-sms-sf-1",
+          "body": "【顺丰速运】尊敬的客户，您的快件已放置门口，签收人：门口。如有疑问请致电快递员。",
+          "sender": "顺丰速运 李师傅",
+          "time": "2026-10-12 17:03"
+        },
+        {
+          "id": "chat-sms-sf-2",
+          "body": "【顺丰速运】尊敬的客户，您的快件已放置门口，签收人：门口。如有疑问请致电快递员。",
+          "sender": "顺丰速运 李师傅",
+          "time": "2026-10-17 09:48"
+        },
+        {
+          "id": "chat-sms-sf-3",
+          "body": "【顺丰速运】尊敬的客户，您的快件已放置门口，签收人：门口。如有疑问请致电快递员。",
+          "sender": "顺丰速运 李师傅",
+          "time": "2026-10-20 13:22"
+        },
+        {
+          "id": "chat-sms-sf-4",
+          "body": "【顺丰速运】尊敬的客户，您的快件已放置门口，签收人：门口。如有疑问请致电快递员。",
+          "sender": "顺丰速运 李师傅",
+          "time": "2026-10-24 10:31"
+        }
+      ]
+    },
+    {
+      "id": "chat-sms-zto",
+      "app": "messages",
+      "title": "中通快递 王师傅",
+      "participants": [
+        "owner"
+      ],
+      "messages": [
+        {
+          "id": "chat-sms-zto-1",
+          "body": "【中通快递】您的包裹已送达，家中无人已放门口，麻烦及时取件，谢谢！",
+          "sender": "中通快递 王师傅",
+          "time": "2026-10-14 12:40"
+        },
+        {
+          "id": "chat-sms-zto-2",
+          "body": "【中通快递】您的包裹已送达，家中无人已放门口，麻烦及时取件，谢谢！",
+          "sender": "中通快递 王师傅",
+          "time": "2026-10-18 15:16"
+        },
+        {
+          "id": "chat-sms-zto-3",
+          "body": "【中通快递】您的包裹已送达，家中无人已放门口，麻烦及时取件，谢谢！",
+          "sender": "中通快递 王师傅",
+          "time": "2026-10-22 18:55"
+        }
+      ]
+    },
+    {
+      "id": "chat-sms-jd",
+      "app": "messages",
+      "title": "京东快递 赵师傅",
+      "participants": [
+        "owner"
+      ],
+      "messages": [
+        {
+          "id": "chat-sms-jd-1",
+          "body": "【京东快递】您好，您的订单已送达，按您的备注放在门口，请注意查收。",
+          "sender": "京东快递 赵师傅",
+          "time": "2026-10-11 14:35"
+        },
+        {
+          "id": "chat-sms-jd-2",
+          "body": "【京东快递】您好，您的订单已送达，按您的备注放在门口，请注意查收。",
+          "sender": "京东快递 赵师傅",
+          "time": "2026-10-16 20:27"
+        },
+        {
+          "id": "chat-sms-jd-3",
+          "body": "【京东快递】您好，您的订单已送达，按您的备注放在门口，请注意查收。",
+          "sender": "京东快递 赵师傅",
+          "time": "2026-10-21 10:44"
+        },
+        {
+          "id": "chat-sms-jd-4",
+          "body": "【京东快递】您好，您的订单已送达，按您的备注放在门口，请注意查收。",
+          "sender": "京东快递 赵师傅",
+          "time": "2026-10-24 19:08"
+        }
+      ]
+    },
+    {
+      "id": "chat-sms-yunda",
+      "app": "messages",
+      "title": "韵达快递 刘师傅",
+      "participants": [
+        "owner"
+      ],
+      "messages": [
+        {
+          "id": "chat-sms-yunda-1",
+          "body": "【韵达快递】您好，快递已帮您放在门口了，记得拿一下哦。",
+          "sender": "韵达快递 刘师傅",
+          "time": "2026-10-13 10:26"
+        },
+        {
+          "id": "chat-sms-yunda-2",
+          "body": "【韵达快递】您好，快递已帮您放在门口了，记得拿一下哦。",
+          "sender": "韵达快递 刘师傅",
+          "time": "2026-10-17 17:50"
+        },
+        {
+          "id": "chat-sms-yunda-3",
+          "body": "【韵达快递】您好，快递已帮您放在门口了，记得拿一下哦。",
+          "sender": "韵达快递 刘师傅",
+          "time": "2026-10-23 09:12"
+        }
+      ]
+    },
+    {
+      "id": "chat-sms-unknown",
+      "app": "messages",
+      "title": "+86 176****8832",
+      "participants": [
+        "owner"
+      ],
+      "messages": [
+        {
+          "id": "sms-unknown-1",
+          "body": "Kingston你再不和我宝宝主动卖腐你就等着回加拿大吧！",
+          "sender": "+86 176****8832",
+          "time": "2026-10-24 23:41"
+        }
+      ]
+    },
+    {
+      "id": "chat-wa-sister",
+      "app": "whatsapp",
+      "title": "姐姐",
+      "participants": [
+        "owner",
+        "sister"
+      ],
+      "messages": [
+        {
+          "id": "wa-sister-1",
+          "body": "过得挺好的呀",
+          "senderId": "owner",
+          "time": "2026-10-24 22:10"
+        },
+        {
+          "id": "wa-sister-2",
+          "body": "北京最近降温了",
+          "senderId": "owner",
+          "time": "2026-10-24 22:10"
+        },
+        {
+          "id": "wa-sister-3",
+          "body": "感觉比Vancouver冷",
+          "senderId": "owner",
+          "time": "2026-10-24 22:11"
+        }
+      ]
+    },
+    {
+      "id": "chat-wa-dad",
+      "app": "whatsapp",
+      "title": "Dad",
+      "participants": [
+        "owner",
+        "dad"
+      ],
+      "messages": [
+        {
+          "id": "wa-dad-locked",
+          "body": "",
+          "senderId": "dad",
+          "time": "2026-10-23 20:30",
+          "meta": {
+            "locked": "true"
+          }
+        }
+      ]
+    },
+    {
+      "id": "chat-wa-mom",
+      "app": "whatsapp",
+      "title": "Mom",
+      "participants": [
+        "owner",
+        "mom"
+      ],
+      "messages": [
+        {
+          "id": "wa-mom-locked",
+          "body": "",
+          "senderId": "mom",
+          "time": "2026-10-23 20:30",
+          "meta": {
+            "locked": "true"
+          }
+        }
+      ]
+    },
+    {
+      "id": "chat-wa-vfs",
+      "app": "whatsapp",
+      "title": "vfs team",
+      "participants": [
+        "owner"
+      ],
+      "messages": [
+        {
+          "id": "wa-vfs-joined",
+          "body": "你已加入此群组",
+          "kind": "event",
+          "folder": "群组",
+          "time": "2026-09-02 10:15"
+        }
+      ]
+    },
+    {
+      "id": "chat-wa-wintergame",
+      "app": "whatsapp",
+      "title": "winter game",
+      "participants": [
+        "owner"
+      ],
+      "messages": [
+        {
+          "id": "wa-wintergame-joined",
+          "body": "你已加入此群组",
+          "kind": "event",
+          "folder": "群组",
+          "time": "2026-08-14 21:03"
+        }
+      ]
+    },
+    {
+      "id": "chat-wa-vanasians",
+      "app": "whatsapp",
+      "title": "Vancouver Asians",
+      "participants": [
+        "owner"
+      ],
+      "messages": [
+        {
+          "id": "wa-vanasians-joined",
+          "body": "你已加入此群组",
+          "kind": "event",
+          "folder": "群组",
+          "time": "2026-06-30 18:20"
         }
       ]
     }
@@ -652,6 +962,282 @@
         "body": "我听说你回国了，如果有机会你来上海，我们还能再见面吗？我很想你。",
         "time": "2026-10-24 23:58"
       }
+    ],
+    "phone": [
+      {
+        "id": "call-in-1",
+        "title": "138****2716",
+        "body": "",
+        "sender": "138****2716",
+        "time": "2026-10-24 18:42",
+        "meta": {
+          "number": "北京",
+          "status": "呼入"
+        }
+      },
+      {
+        "id": "call-in-2",
+        "title": "010-6***-3359",
+        "body": "",
+        "sender": "010-6***-3359",
+        "time": "2026-10-24 11:05",
+        "meta": {
+          "number": "北京",
+          "status": "呼入"
+        }
+      },
+      {
+        "id": "call-in-3",
+        "title": "186****0943",
+        "body": "",
+        "sender": "186****0943",
+        "time": "2026-10-23 20:17",
+        "meta": {
+          "number": "北京",
+          "status": "呼入"
+        }
+      },
+      {
+        "id": "call-in-4",
+        "title": "135****6628",
+        "body": "",
+        "sender": "135****6628",
+        "time": "2026-10-23 09:31",
+        "meta": {
+          "number": "北京",
+          "status": "呼入"
+        }
+      },
+      {
+        "id": "call-in-5",
+        "title": "010-8***-7104",
+        "body": "",
+        "sender": "010-8***-7104",
+        "time": "2026-10-22 16:58",
+        "meta": {
+          "number": "北京",
+          "status": "呼入"
+        }
+      },
+      {
+        "id": "call-in-6",
+        "title": "139****5172",
+        "body": "",
+        "sender": "139****5172",
+        "time": "2026-10-22 10:24",
+        "meta": {
+          "number": "北京",
+          "status": "呼入"
+        }
+      },
+      {
+        "id": "call-in-7",
+        "title": "158****3380",
+        "body": "",
+        "sender": "158****3380",
+        "time": "2026-10-21 21:46",
+        "meta": {
+          "number": "北京",
+          "status": "呼入"
+        }
+      },
+      {
+        "id": "call-in-8",
+        "title": "010-5***-2287",
+        "body": "",
+        "sender": "010-5***-2287",
+        "time": "2026-10-20 14:09",
+        "meta": {
+          "number": "北京",
+          "status": "呼入"
+        }
+      },
+      {
+        "id": "call-in-9",
+        "title": "185****7765",
+        "body": "",
+        "sender": "185****7765",
+        "time": "2026-10-19 19:33",
+        "meta": {
+          "number": "北京",
+          "status": "呼入"
+        }
+      },
+      {
+        "id": "call-in-10",
+        "title": "137****4019",
+        "body": "",
+        "sender": "137****4019",
+        "time": "2026-10-18 12:52",
+        "meta": {
+          "number": "北京",
+          "status": "呼入"
+        }
+      }
+    ],
+    "safari": [
+      {
+        "id": "search-1",
+        "title": "万圣节妆容",
+        "body": "",
+        "folder": "搜索记录",
+        "sender": "Kingston",
+        "meta": {
+          "url": "google.com/search?q=万圣节妆容"
+        }
+      },
+      {
+        "id": "search-2",
+        "title": "失眠助眠音乐",
+        "body": "",
+        "folder": "搜索记录",
+        "sender": "Kingston",
+        "meta": {
+          "url": "google.com/search?q=失眠助眠音乐"
+        }
+      },
+      {
+        "id": "search-3",
+        "title": "不想吃饭怎么办",
+        "body": "",
+        "folder": "搜索记录",
+        "sender": "Kingston",
+        "meta": {
+          "url": "google.com/search?q=不想吃饭怎么办"
+        }
+      },
+      {
+        "id": "search-4",
+        "title": "植发恢复期护理",
+        "body": "",
+        "folder": "搜索记录",
+        "sender": "Kingston",
+        "meta": {
+          "url": "google.com/search?q=植发恢复期护理"
+        }
+      },
+      {
+        "id": "search-5",
+        "title": "和同事弟弟做了怎么办",
+        "body": "",
+        "folder": "搜索记录",
+        "sender": "Kingston",
+        "meta": {
+          "url": "google.com/search?q=和同事弟弟做了怎么办"
+        }
+      },
+      {
+        "id": "search-6",
+        "title": "要不要跟前男友复合",
+        "body": "",
+        "folder": "搜索记录",
+        "sender": "Kingston",
+        "meta": {
+          "url": "google.com/search?q=要不要跟前男友复合"
+        }
+      }
+    ],
+    "calendar": [
+      {
+        "id": "calendar-flight",
+        "title": "坐飞机",
+        "body": "",
+        "time": "2026-10-12 09:00",
+        "sender": "Kingston"
+      }
+    ],
+    "reminders": [
+      {
+        "id": "reminder-flight",
+        "title": "坐飞机",
+        "body": "",
+        "time": "2026-10-12 09:00",
+        "folder": "提醒事项",
+        "sender": "Kingston"
+      }
+    ],
+    "mail": [
+      {
+        "id": "amazon-1",
+        "sender": "Amazon.ca",
+        "title": "Your Halloween picks are here 🎃",
+        "body": "Hi Kingston,\n\nCostumes, décor and treats — everything you need for October 31 is in one place. Order by Tuesday for delivery before Halloween with free shipping on eligible orders.\n\nShop Halloween Deals\n\nAmazon.ca",
+        "time": "2026-10-24 07:15",
+        "meta": {
+          "email": "store-news@amazon.ca",
+          "recipient": "Kingston"
+        }
+      },
+      {
+        "id": "amazon-2",
+        "sender": "Amazon.ca",
+        "title": "Black Friday Early Deals start now",
+        "body": "Hi Kingston,\n\nWhy wait? Early Black Friday deals are live on headphones, kitchen essentials and more — up to 40% off for a limited time.\n\nDeals end soon. Quantities are limited.\n\nSee all deals",
+        "time": "2026-10-21 08:02",
+        "meta": {
+          "email": "store-news@amazon.ca",
+          "recipient": "Kingston"
+        }
+      },
+      {
+        "id": "amazon-3",
+        "sender": "Amazon.ca",
+        "title": "Kingston, items you viewed are on sale",
+        "body": "Hi Kingston,\n\nGood news — some items you recently viewed just dropped in price. Take another look before they're gone.\n\nYou can manage your email preferences in Your Account.\n\nAmazon.ca",
+        "time": "2026-10-16 19:40",
+        "meta": {
+          "email": "store-news@amazon.ca",
+          "recipient": "Kingston"
+        }
+      },
+      {
+        "id": "uoft-1",
+        "sender": "U of T Alumni",
+        "title": "Thinking of you, wherever you are",
+        "body": "Dear Kingston,\n\nAs the season changes, we wanted to reach out and say hello. Wherever life has taken you since graduation, you remain part of the University of Toronto community.\n\nIf you're going through a busy or difficult time, please remember that confidential wellness support and career advising are available to alumni at no cost. We'd also love to hear what you're up to.\n\nWarm regards,\nAlumni Relations\nUniversity of Toronto",
+        "time": "2026-10-20 10:00",
+        "meta": {
+          "email": "alumni@utoronto.ca",
+          "recipient": "Kingston"
+        }
+      },
+      {
+        "id": "uoft-2",
+        "sender": "U of T Alumni",
+        "title": "Checking in: how are you doing?",
+        "body": "Hi Kingston,\n\nWe know that moving to a new city or starting a new chapter can be exciting — and a little overwhelming. We just wanted to check in and see how you're doing.\n\nOur global alumni network is here for you, from local meetups to one-on-one mentorship. Just reply to this email if there's anything we can help with.\n\nTake care,\nAlumni Relations\nUniversity of Toronto",
+        "time": "2026-10-09 15:30",
+        "meta": {
+          "email": "alumni@utoronto.ca",
+          "recipient": "Kingston"
+        }
+      }
+    ],
+    "netflix": [
+      {
+        "id": "netflix-rwrb",
+        "title": "Red, White & Royal Blue",
+        "body": "",
+        "folder": "最近在看",
+        "sender": "Netflix",
+        "meta": {
+          "year": "2023",
+          "genre": "爱情喜剧",
+          "duration": "2小时1分"
+        }
+      },
+      {
+        "id": "netflix-heated-rivalry",
+        "title": "Heated Rivalry",
+        "body": "",
+        "folder": "最近在看",
+        "sender": "Netflix",
+        "meta": {
+          "year": "2025",
+          "genre": "剧集",
+          "duration": "第1季"
+        }
+      }
     ]
   },
   "variables": {},
@@ -749,6 +1335,24 @@
           "value": true
         }
       ]
+    },
+    {
+      "id": "taobao-leo-message",
+      "label": "打开淘宝时收到 Leo 的微信",
+      "event": "openApp",
+      "target": "taobao",
+      "actions": [
+        {
+          "type": "unlock",
+          "key": "leo-condoms",
+          "value": true
+        },
+        {
+          "type": "notification",
+          "key": "wechat",
+          "value": "微信：Leo：昨天套子用完了，该买了"
+        }
+      ]
     }
   ],
   "tests": [
@@ -799,6 +1403,10 @@
         {
           "event": "send",
           "target": "eva-out-1"
+        },
+        {
+          "event": "openApp",
+          "target": "taobao"
         }
       ],
       "expectUnlocked": [
@@ -812,7 +1420,8 @@
         "liujuan-out-2",
         "liujuan-reply-1",
         "liujuan-reply-2",
-        "eva-out-1"
+        "eva-out-1",
+        "leo-condoms"
       ]
     }
   ]

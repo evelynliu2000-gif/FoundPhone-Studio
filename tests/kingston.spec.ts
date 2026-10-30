@@ -251,3 +251,148 @@ test("Kingston: WhatsApp, Spotify, Threads, Taobao, delivery and WeChat friend r
   await shot("wechat-request-detail");
   expect(errors).toEqual([]);
 });
+test("Kingston: calls, SMS, Google history, calendar, mail, WhatsApp, Netflix and Taobao trigger", async ({
+  page,
+}) => {
+  test.setTimeout(60000);
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/");
+  const phone = page.locator(".phone-screen");
+  await phone.getByRole("button", { name: "轻触解锁" }).click();
+  for (const n of "0306")
+    await phone
+      .getByRole("button", { name: "密码键" + n, exact: true })
+      .click();
+  await expect(phone.locator(".home-screen")).toBeVisible();
+  const openApp = async (name: string) => {
+    await phone.getByRole("button", { name: "返回桌面", exact: true }).click();
+    const icon = phone.getByRole("button", {
+      name: "打开" + name,
+      exact: true,
+    });
+    if (!(await icon.isVisible())) {
+      const box = await phone.boundingBox();
+      await page.mouse.move(box!.x + box!.width * 0.85, box!.y + 400);
+      await page.mouse.down();
+      await page.mouse.move(box!.x + box!.width * 0.15, box!.y + 400, {
+        steps: 8,
+      });
+      await page.mouse.up();
+    }
+    await icon.click();
+    await expect(page.locator(".app-screen:not([inert])")).toHaveCSS(
+      "transform",
+      "none",
+    );
+  };
+  const shot = (name: string) =>
+    phone.screenshot({ path: `outputs/kingston/${name}.png` });
+
+  await openApp("电话");
+  await expect(phone.locator(".call-row")).toHaveCount(10);
+  await expect(phone.locator(".call-row").first()).toContainText("138****2716");
+  await expect(phone.locator(".call-row").first()).toContainText("北京");
+  await shot("phone-calls");
+
+  await openApp("信息");
+  for (const t of [
+    "圆通速递 张师傅",
+    "顺丰速运 李师傅",
+    "中通快递 王师傅",
+    "京东快递 赵师傅",
+    "韵达快递 刘师傅",
+    "+86 176****8832",
+  ])
+    await expect(phone.getByText(t, { exact: true })).toBeVisible();
+  await shot("sms-list");
+  await phone.getByText("顺丰速运 李师傅", { exact: true }).click();
+  await expect(phone.locator(".catalog-message")).toHaveCount(4);
+  await phone.getByRole("button", { name: "返回" }).first().click();
+  await phone.getByText("+86 176****8832", { exact: true }).click();
+  await expect(phone.locator(".catalog-message")).toContainText(
+    "Kingston你再不和我宝宝主动卖腐你就等着回加拿大吧！",
+  );
+  await shot("sms-unknown");
+
+  await openApp("浏览器");
+  await expect(phone.locator(".safari-search-history")).toHaveCount(0);
+  await phone.locator(".safari-search-box").click();
+  await expect(phone.locator(".safari-search-history button")).toHaveText([
+    "万圣节妆容",
+    "失眠助眠音乐",
+    "不想吃饭怎么办",
+    "植发恢复期护理",
+    "和同事弟弟做了怎么办",
+    "要不要跟前男友复合",
+  ]);
+  await shot("safari-google");
+
+  await openApp("日历");
+  await expect(phone.locator(".month-title h2")).toHaveText("2026 年 10 月");
+  await phone.locator(".calendar-grid button", { hasText: /^12$/ }).click();
+  await expect(phone.getByText("坐飞机")).toBeVisible();
+  await shot("calendar");
+
+  await openApp("提醒事项");
+  await expect(phone.getByText("坐飞机")).toBeVisible();
+
+  await openApp("邮件");
+  for (const t of [
+    "Your Halloween picks are here 🎃",
+    "Black Friday Early Deals start now",
+    "Kingston, items you viewed are on sale",
+    "Thinking of you, wherever you are",
+    "Checking in: how are you doing?",
+  ])
+    await expect(phone.getByText(t)).toBeVisible();
+  await shot("mail");
+
+  await openApp("Netflix");
+  await expect(phone.getByText("最近在看")).toBeVisible();
+  await expect(
+    phone.locator(".netflix-shelf strong", { hasText: "Heated Rivalry" }),
+  ).toBeVisible();
+  await shot("netflix");
+
+  await openApp("WhatsApp");
+  for (const t of [
+    "Abigail",
+    "姐姐",
+    "Dad",
+    "Mom",
+    "vfs team",
+    "winter game",
+    "Vancouver Asians",
+  ])
+    await expect(
+      phone.locator(".wa-chat-row strong", { hasText: new RegExp(`^${t}$`) }),
+    ).toBeVisible();
+  await shot("whatsapp-list");
+  await phone.locator(".wa-chat-row", { hasText: "Dad" }).click();
+  await expect(phone.locator(".wa-locked-notice")).toBeVisible();
+  await expect(phone.locator(".wa-thread-profile")).toHaveCount(0);
+  await shot("whatsapp-locked");
+  await phone.locator(".wa-chat-row", { hasText: "姐姐" }).click();
+  await expect(phone.locator(".skin-messages")).toContainText(
+    "感觉比Vancouver冷",
+  );
+  await phone.getByRole("button", { name: "返回聊天列表" }).click();
+  await phone.locator(".wa-chat-row", { hasText: "vfs team" }).click();
+  await expect(phone.locator(".skin-system-tip")).toHaveText("你已加入此群组");
+
+  // Opening Taobao delivers Leo's WeChat message as a banner and in the chat.
+  await openApp("淘宝");
+  await expect(page.getByText("昨天套子用完了，该买了").first()).toBeVisible();
+  await shot("taobao-banner");
+  await openApp("微信");
+  await phone
+    .locator(".wechat-ui")
+    .getByRole("button", { name: "Leo" })
+    .first()
+    .click();
+  await expect(phone.locator(".skin-messages")).toContainText(
+    "昨天套子用完了，该买了",
+  );
+  expect(errors).toEqual([]);
+});
