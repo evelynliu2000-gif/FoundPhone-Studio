@@ -470,7 +470,14 @@ test("Kingston: WeChat avatars for Kingston, Leo and Sing", async ({
   expect(leoSrc).toMatch(/^data:image\/jpeg/);
   expect(singSrc).toMatch(/^data:image\/jpeg/);
   expect(leoSrc).not.toBe(singSrc);
-  await expect(row("刘隽").locator("img")).toHaveCount(0);
+  const srcs = [leoSrc, singSrc];
+  for (const t of ["刘隽", "Eva姐", "梓渝"]) {
+    const src = await row(t).locator("img").getAttribute("src");
+    expect(src).toMatch(/^data:image\/jpeg/);
+    srcs.push(src);
+  }
+  expect(new Set(srcs).size).toBe(5);
+  await expect(row("Kingston、Leo、Sing、Eva姐").locator("img")).toHaveCount(0);
   await phone.screenshot({ path: "outputs/kingston/avatars-list.png" });
   await row("Leo").click();
   const own = phone.locator(".skin-message.outgoing img").first();
