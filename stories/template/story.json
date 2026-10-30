@@ -3,7 +3,7 @@
   "id": "kingston-phone",
   "title": "捡手机",
   "description": "Kingston 的手机。",
-  "revision": 12,
+  "revision": 13,
   "phone": {
     "owner": "Kingston",
     "date": "2026-10-22",
@@ -1700,15 +1700,19 @@
         "id": "note-date",
         "title": "约会地点计划",
         "body": "约会地点计划。destination cafe.....",
-        "password": "kx-7f3a-locked",
-        "time": "2026-10-18 01:12"
+        "time": "2026-10-18 01:12",
+        "meta": {
+          "locked": "true"
+        }
       },
       {
         "id": "note-diary",
         "title": "上床日记",
         "body": "上床日记。2026.5.20 我今天居然和他做....",
-        "password": "kx-9c1e-locked",
-        "time": "2026-05-21 02:40"
+        "time": "2026-05-21 02:40",
+        "meta": {
+          "locked": "true"
+        }
       }
     ],
     "photos": [

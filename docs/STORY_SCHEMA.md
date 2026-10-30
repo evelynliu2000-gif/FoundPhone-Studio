@@ -25,6 +25,7 @@
 - `meta.hideTime: "true"` 的消息不显示时间。三人以上的微信群会在消息上方显示发送人名字。
 - 微信 `folder: "新的朋友"` 是好友申请：通讯录标签显示红点，点“添加”会触发 `variable` 事件，target 为 `ui:wechat:friend:<申请 id>`，并打开与申请人同名的会话。
 - 备忘录 `richText` 支持 `taskList` / `taskItem`（`attrs.checked`）勾选清单。
+- `meta.locked: "true"` 的内容显示为已锁定且无法打开（不出现密码框）；需要玩家输入密码时改用 `password`。
 
 ## 仅显示图标的自定义 App
 
