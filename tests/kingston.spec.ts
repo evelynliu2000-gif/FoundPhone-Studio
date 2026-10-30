@@ -31,14 +31,7 @@ test("Kingston: passcode, WeChat chats and scripted typing", async ({
       .click();
   await expect(phone.locator(".home-screen")).toBeVisible();
   await phone.getByRole("button", { name: "打开微信", exact: true }).click();
-  for (const title of [
-    "Leo",
-    "Sing",
-    "刘隽",
-    "Eva姐",
-    "梓渝",
-    "Kingston、Leo、Sing、Eva姐",
-  ])
+  for (const title of ["Leo", "Sing", "刘隽", "Eva姐", "梓渝", "ctbz办公室"])
     await expect(
       phone.locator(".wechat-ui").getByText(title, { exact: true }).first(),
     ).toBeVisible();
@@ -125,7 +118,7 @@ test("Kingston: passcode, WeChat chats and scripted typing", async ({
   await back(phone);
 
   // Group chat exists with its creation tip.
-  await openThread(phone, "Kingston、Leo、Sing、Eva姐");
+  await openThread(phone, "ctbz办公室");
   await expect(thread(phone).locator(".skin-system-tip")).toHaveText(
     "你邀请Leo、Sing、Eva姐加入了群聊",
   );
@@ -477,7 +470,9 @@ test("Kingston: WeChat avatars for Kingston, Leo and Sing", async ({
     srcs.push(src);
   }
   expect(new Set(srcs).size).toBe(5);
-  await expect(row("Kingston、Leo、Sing、Eva姐").locator("img")).toHaveCount(0);
+  const groupSrc = await row("ctbz办公室").locator("img").getAttribute("src");
+  expect(groupSrc).toMatch(/^data:image\/jpeg/);
+  expect(srcs).not.toContain(groupSrc);
   await phone.screenshot({ path: "outputs/kingston/avatars-list.png" });
   await row("Leo").click();
   const own = phone.locator(".skin-message.outgoing img").first();
