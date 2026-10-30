@@ -108,6 +108,8 @@ export const workSchema = z.object({
     notifications: z.boolean(),
     /** Shown in Settings → 关于本机. */
     model: z.string().max(40).optional(),
+    /** false: every visit starts fresh — progress and home layout are not saved. */
+    saveProgress: z.boolean().optional(),
   }),
   apps: z
     .array(

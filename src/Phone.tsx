@@ -208,9 +208,17 @@ function PhoneRuntime({
     setOwn(next);
     onRuntime?.(next);
   };
+  // phone.saveProgress === false: start from the beginning on every visit.
+  const persist = work.phone.saveProgress !== false;
   useEffect(() => {
     let active = true;
     if (creator || external) return;
+    if (!persist) {
+      setOwn(dispatch(work, initialRuntime(work), "start"));
+      setReady(true);
+      void db.saves.delete(work.id).catch(() => undefined);
+      return;
+    }
     void db.saves
       .get(work.id)
       .then((saved) => {
@@ -231,13 +239,13 @@ function PhoneRuntime({
     return () => {
       active = false;
     };
-  }, [work.id, work.updatedAt, creator, external]);
+  }, [work.id, work.updatedAt, creator, external, persist]);
   useEffect(() => {
-    if (!creator && !external && ready)
+    if (!creator && !external && ready && persist)
       void db.saves
         .put({ id: work.id, state: own })
         .catch(() => setLoadError("存档失败，请检查浏览器存储权限。"));
-  }, [own, creator, work.id, external, ready]);
+  }, [own, creator, work.id, external, ready, persist]);
   useEffect(() => {
     if (creator || !ready) return;
     const interval = setInterval(() => {

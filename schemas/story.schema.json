@@ -66,6 +66,9 @@
         "model": {
           "type": "string",
           "maxLength": 40
+        },
+        "saveProgress": {
+          "type": "boolean"
         }
       },
       "required": [
