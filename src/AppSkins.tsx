@@ -116,6 +116,12 @@ function MessageList({
             {!whatsapp && !i.outgoing && (
               <Avatar name={i.sender} src={i.avatar} />
             )}
+            {/* Group chats (3+ participants) show the sender's name, as WeChat does. */}
+            {!whatsapp &&
+              !i.outgoing &&
+              (i.meta?.participants ?? "").split(",").length > 2 && (
+                <span className="wx-sender-name">{i.sender}</span>
+              )}
             <button
               className="skin-bubble"
               onClick={() => (creator ? onItem(i) : onRead(i.id))}

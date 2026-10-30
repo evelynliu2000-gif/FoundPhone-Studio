@@ -1134,3 +1134,20 @@
   width: 100%;
   justify-content: flex-start;
 }
+/* WeChat group chats: sender name above incoming bubbles. */
+.ios18 .wechat-ui .skin-message:has(.wx-sender-name) {
+  display: grid;
+  grid-template-columns: 40px minmax(0, max-content);
+  grid-template-rows: auto auto;
+  column-gap: 10px;
+  row-gap: 4px;
+  justify-content: start;
+}
+.ios18 .wechat-ui .skin-message:has(.wx-sender-name) > .skin-avatar {
+  grid-row: 1 / span 2;
+}
+.ios18 .wechat-ui .wx-sender-name {
+  color: #8c8c8c;
+  font-size: 12px;
+  line-height: 1.2;
+}

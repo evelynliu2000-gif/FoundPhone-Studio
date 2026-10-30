@@ -39,6 +39,8 @@ import {
   useState,
   useRef,
   useMemo,
+  useContext,
+  useCallback,
   Suspense,
   type CSSProperties,
 } from "react";
@@ -143,8 +145,11 @@ function PhoneRuntime({
   const [keyboard, setKeyboardState] = useState<false | { script: Item[] }>(
     false,
   );
-  const setKeyboard = (open: boolean, script: Item[] = []) =>
-    setKeyboardState(open ? { script } : false);
+  const setKeyboard = useCallback(
+    (open: boolean, script: Item[] = []) =>
+      setKeyboardState(open ? { script } : false),
+    [],
+  );
   const [recent, setRecent] = useState<string[]>([]);
   const appSnapshots = useRef(new Map<string, HTMLElement>());
   const [banner, setBanner] = useState("");
@@ -897,6 +902,12 @@ function AppContent({
 }) {
   const [detail, setDetail] = useState<Item | null>(null);
   const [thread, setThread] = useState("");
+  // Leaving or switching a conversation dismisses the keyboard, as on a real
+  // phone; an unfinished scripted draft resumes on the next tap.
+  const setKeyboard = useContext(KeyboardContext);
+  useEffect(() => {
+    setKeyboard(false);
+  }, [thread, setKeyboard]);
   const [tab, setTab] = useState(app.tabs[0]);
   const [q, setQ] = useState("");
   const [pw, setPw] = useState("");

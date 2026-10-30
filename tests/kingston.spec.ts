@@ -56,6 +56,13 @@ test("Kingston: passcode, WeChat chats and scripted typing", async ({
   await phone.getByRole("button", { name: "收起键盘" }).click();
   await back(phone);
 
+  // Leaving a chat mid-typing dismisses the keyboard; the rest resumes later.
+  await openThread(phone, "Sing");
+  await phone.getByRole("button", { name: "输入消息" }).click();
+  await expect(phone.getByLabel("消息草稿")).toHaveValue(/我和/);
+  await back(phone);
+  await expect(phone.locator(".device-keyboard")).toHaveCount(0);
+
   // Sing
   await openThread(phone, "Sing");
   await expect(thread(phone)).toContainText("昨晚我很开心");
@@ -117,11 +124,24 @@ test("Kingston: passcode, WeChat chats and scripted typing", async ({
     await expect(thread(phone)).toContainText(line);
   await back(phone);
 
-  // Group chat exists with its creation tip.
+  // Group chat: creation tip, then Eva姐's notice and the replies with names.
   await openThread(phone, "ctbz办公室");
   await expect(thread(phone).locator(".skin-system-tip")).toHaveText(
     "你邀请Leo、Sing、Eva姐加入了群聊",
   );
+  await expect(thread(phone).locator(".skin-bubble")).toContainText([
+    "@全体成员 明天早上10点化妆师会来，下午一点准时出发，辛苦各位明天早起～",
+    "收到",
+    "好的姐姐",
+    "111",
+  ]);
+  await expect(thread(phone).locator(".wx-sender-name")).toHaveText([
+    "Eva姐",
+    "Sing",
+    "Leo",
+  ]);
+  await expect(phone.locator(".device-keyboard")).toHaveCount(0);
+  await phone.screenshot({ path: "outputs/kingston/group-chat.png" });
   await back(phone);
 
   // Progress survives a reload.
@@ -193,6 +213,8 @@ test("Kingston: WhatsApp, Spotify, Threads, Taobao, delivery and WeChat friend r
     "料杰你们什么时候能调理好",
     "zjj是不是疯了居然躲开",
     "林克们又护复审了",
+    "TTC delays again this morning",
+    "immigration rules keep changing",
   ])
     await expect(phone.getByText(t)).toBeVisible();
   await shot("threads");
@@ -296,6 +318,7 @@ test("Kingston: calls, SMS, Google history, calendar, mail, WhatsApp, Netflix an
     "京东快递 赵师傅",
     "韵达快递 刘师傅",
     "+86 176****8832",
+    "+86 152****0619",
   ])
     await expect(phone.getByText(t, { exact: true })).toBeVisible();
   await shot("sms-list");
@@ -307,6 +330,11 @@ test("Kingston: calls, SMS, Google history, calendar, mail, WhatsApp, Netflix an
     "Kingston你再不和我宝宝主动卖腐你就等着回加拿大吧！",
   );
   await shot("sms-unknown");
+  await phone.getByRole("button", { name: "返回" }).first().click();
+  await phone.getByText("+86 152****0619", { exact: true }).click();
+  await expect(phone.locator(".catalog-message")).toContainText(
+    "不麦麸就滚！！",
+  );
 
   await openApp("浏览器");
   await expect(phone.locator(".safari-search-history")).toHaveCount(0);
