@@ -134,8 +134,14 @@ export function validateLayout(raw: unknown, input: Work) {
 export function useDeviceLayout(authored: Work, creator = false) {
   const base = useMemo(() => ensureAppStore(authored), [authored]);
   const key = "foundphone-layout-v1:" + base.id;
+  // phone.saveProgress === false: the home screen also resets on every visit.
+  const persist = base.phone.saveProgress !== false;
   const [stored, setStored] = useState(() => {
       try {
+        if (!persist) {
+          localStorage.removeItem(key);
+          return defaultLayout(base);
+        }
         const text = localStorage.getItem(key);
         return text
           ? validateLayout(JSON.parse(text), base)
@@ -147,13 +153,13 @@ export function useDeviceLayout(authored: Work, creator = false) {
     [error, setError] = useState("");
   const layout = stored.workId === base.id ? stored : defaultLayout(base);
   useEffect(() => {
-    if (creator) return;
+    if (creator || !persist) return;
     try {
       localStorage.setItem(key, JSON.stringify(layout));
     } catch {
       setError("桌面布局保存失败，请检查本地存储空间");
     }
-  }, [layout, key, creator]);
+  }, [layout, key, creator, persist]);
   const change = (fn: (draft: DeviceLayout) => void) =>
     setStored((old) => {
       const next = structuredClone(

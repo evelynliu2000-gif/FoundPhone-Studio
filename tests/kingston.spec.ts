@@ -157,8 +157,9 @@ test("Kingston: passcode, WeChat chats and scripted typing", async ({
   await phone.screenshot({ path: "outputs/kingston/group-chat.png" });
   await back(phone);
 
-  // Progress survives a reload.
+  // phone.saveProgress is false: a reload starts the story from the beginning.
   await page.reload();
+  await expect(phone.getByRole("button", { name: "轻触解锁" })).toBeVisible();
   await phone.getByRole("button", { name: "轻触解锁" }).click();
   for (const n of "0306")
     await phone
@@ -166,7 +167,11 @@ test("Kingston: passcode, WeChat chats and scripted typing", async ({
       .click();
   await phone.getByRole("button", { name: "打开微信", exact: true }).click();
   await openThread(phone, "Eva姐");
-  await expect(thread(phone)).toContainText("知道了");
+  await expect(thread(phone)).toContainText("你再忍忍吧");
+  await expect(thread(phone)).not.toContainText("知道了");
+  await back(phone);
+  await openThread(phone, "Leo");
+  await expect(thread(phone)).not.toContainText("起床了吗");
   expect(errors).toEqual([]);
 });
 test("Kingston: WhatsApp, Spotify, Threads, Taobao, delivery and WeChat friend request", async ({
